@@ -1,11 +1,21 @@
 import cv2
 import numpy as np
 
-video_stream = cv2.VideoCapture("prueba.MTS")
+video_stream = cv2.VideoCapture("test.mp4")
 ok, img = video_stream.read()
 img = img[0:1080,0:1550]
 frame1 = None
 frame2 = None
+
+def frame_analisis(region):
+    #Detectamos de que lado es
+    print(len(region))
+    print(region)
+    if region[0]<1920/2:
+        pass
+    else:
+        pass
+
 while ok:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray,(5,5),0)
@@ -23,19 +33,19 @@ while ok:
         area = cv2.contourArea(cnt)
         if area>115000 and area<350000:
             x,y,w,h = cv2.boundingRect(cnt)
+            cnt_len = cv2.arcLength(cnt,True)
+            contorno = cv2.approxPolyDP(cnt,0.035*cnt_len,closed=True)
             ratio = float(w)/h
             if ratio>=0.6 and ratio <= 0.9:
-                rect = cv2.minAreaRect(cnt)
-                box = cv2.boxPoints(rect)
-                box = np.intp(box)
-                rectangles.append(box)
-    if len(rectangles)>0:
-        print(rectangles)
-        img = cv2.drawContours(img,rectangles,-1,(0,0,255),2)
-        rectangles.clear()
-
+                #rect = cv2.minAreaRect(cnt)
+                #box = cv2.boxPoints(rect)
+                #box = np.intp(box)
+                #rectangles.append(box)
+                frame_analisis(contorno[0][0])
+                rectangles.append(contorno)
+    cv2.drawContours(img,rectangles,-1,(0,255,0),3)
     cv2.imshow("Shapes", img)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    rectangles.clear()
+    k = cv2.waitKey(0)
     ok,img = video_stream.read()
     img = img[0:1080,0:1550]

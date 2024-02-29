@@ -1,6 +1,6 @@
 import cv2 
 import numpy as np
-cap = cv2.VideoCapture("Trim2.MTS")
+cap = cv2.VideoCapture("test.mp4")
 #First Frame
 
 ok, frame = cap.read()

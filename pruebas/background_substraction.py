@@ -3,7 +3,7 @@ import cv2 as cv
 
 backSub = cv.createBackgroundSubtractorMOG2()
 backSub2 = cv.createBackgroundSubtractorKNN()
-capture = cv.VideoCapture("prueba.MTS")
+capture = cv.VideoCapture("test.mp4")
 ret, frame = capture.read()
 frame = cv.cvtColor(frame,cv.COLOR_BGR2GRAY)
 fondo = frame.copy()

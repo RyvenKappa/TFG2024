@@ -3,7 +3,7 @@ import numpy as np
 
 
 # Read the video and first frame
-cap = cv2.VideoCapture("trim2.MTS")
+cap = cv2.VideoCapture("test.mp4")
 ret, old_frame = cap.read()
  
 # crate HSV & make Value a constant
