@@ -2,10 +2,10 @@ import cv2
 import numpy as np
 
 video_stream = cv2.VideoCapture("prueba.MTS")
-
 ok, img = video_stream.read()
 img = img[0:1080,0:1550]
-img1 = img.copy()
+frame1 = None
+frame2 = None
 while ok:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray,(5,5),0)
@@ -29,8 +29,9 @@ while ok:
                 box = cv2.boxPoints(rect)
                 box = np.intp(box)
                 rectangles.append(box)
-    if len(rectangles)>=0:
-        img = cv2.drawContours(thresh,rectangles,-1,(0,0,255),2)
+    if len(rectangles)>0:
+        print(rectangles)
+        img = cv2.drawContours(img,rectangles,-1,(0,0,255),2)
         rectangles.clear()
 
     cv2.imshow("Shapes", img)
