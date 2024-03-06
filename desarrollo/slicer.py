@@ -19,7 +19,7 @@ def frame_analisis(region):
 while ok:
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray,(5,5),0)
-    gray = cv2.convertScaleAbs(gray,1.5,1)
+    #gray = cv2.convertScaleAbs(gray,1.5,1)
     
     
     ret,thresh = cv2.threshold(gray,50,255,0)
