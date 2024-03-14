@@ -1,0 +1,7 @@
+train: C:/Users/Diego/Documents/TFG2024/training/dataset/images/train
+val: C:/Users/Diego/Documents/TFG2024/training/dataset/images/val
+test: C:/Users/Diego/Documents/TFG2024/training/dataset/images/test
+
+nc: 1
+
+names: ["fish"]
