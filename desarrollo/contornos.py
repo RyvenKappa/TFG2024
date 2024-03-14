@@ -2,11 +2,11 @@ import cv2
 import numpy as np
 from torch import cuda
 from ultralytics import YOLO
-#model = YOLO("yolov8n.pt") 
-#model.info()
-#model.to('cuda')
-#results = model.predict(source="test.mp4",show=True)
-# from ultralytics import SAM
+model = YOLO("yolov8n.pt") 
+model.info()
+model.to('cuda')
+results = model.predict(source="test.mp4",show=True)
+from ultralytics import SAM
 
 # # Load a model
 # model = SAM('sam_b.pt')
