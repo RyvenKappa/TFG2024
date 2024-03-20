@@ -9,3 +9,4 @@ test.mp4
 imagenes_prueba
 training/dataset
 runs
+*.mov
