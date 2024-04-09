@@ -1,0 +1,7 @@
+train: C:/Users/Diego/Documents/TFG2024/training/dataset2/images/train
+val: C:/Users/Diego/Documents/TFG2024/training/dataset2/images/val
+test: C:/Users/Diego/Documents/TFG2024/training/dataset2/images/test
+
+nc: 2
+
+names: ["tail","head"]

@@ -7,6 +7,6 @@ test.mp4
 *.avi
 *.pt
 imagenes_prueba
-training/dataset
+training/dataset*
 runs
 *.mov
