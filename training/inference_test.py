@@ -78,6 +78,7 @@ for r in results:
                 IcentroidxList.append(bb[0])
                 IcentroidyList.append(bb[1])
         i = i + 1
+    frames = frames + 1
 
 DcentroidxListDiff = np.diff(DcentroidxList)
 DcentroidyListDiff = np.diff(DcentroidyList)
@@ -100,6 +101,7 @@ for x, y in zip(IcentroidxListDiff,IcentroidyListDiff):
     LeftFinal.append(distance)
 
 #Arreglar que el array numpy sea un vector, no un (x,)
-print(str(frames))
-print(len(RightFinal))
-print(len(LeftFinal))
+plt.plot(RightFinal)
+plt.show()
+plt.plot(LeftFinal)
+plt.show()
