@@ -1,11 +1,10 @@
 from ultralytics import YOLO
 import matplotlib.pyplot as plt
 
-model = YOLO("C:/Users/Diego/Documents/TFG2024/runs/detect/train/weights/best.pt")
-model.to("cuda")
+model = YOLO("runs/detect/train/weights/best.onnx")
 #Con el argumento save podemos decirle que guarde el video o las imágenes según si es solo un fotograma
 #Con save_crop le decimos que guarde todos los recordes de todas las bounding box, sin información añadida y sin poder acceder al bucle
-results = model.predict(source="C:/Users/Diego/Documents/TFG2024/resources/videos/test2.mp4")
+results = model.predict(source="resources/videos/test2.mp4")
 
 
 #11 de Abril: planteamiento: sacar un registro de prueba de las bounding box, su centroide respecto al frame y una gráfica de distribución del centroide
@@ -29,6 +28,8 @@ for r in results:
             centroy = bb[1]
             centroyList.append(centroy)
             area.append(bb[2]*bb[3])
+            area = [(i/(1920*1080)) for i in area]
+
             data = [centrox,centroy,bb[2]*bb[3]]
             bounding_box_data.append(data) # Podemos hacer esto con un pandas
             i=i+1
@@ -38,7 +39,7 @@ file_output.write(str(bounding_box_data))
 file_output.close()
 
 #Prueba de gráfica
-
+#Meter el color transformando areas a rgb
 plt.scatter(centroxList,centroyList,area)
 plt.xlabel('posición x')
 plt.ylabel('posición y')
