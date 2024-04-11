@@ -13,14 +13,20 @@ results = model.predict(source="C:/Users/Diego/Documents/TFG2024/resources/video
 
 #1 Obtenemos las bounding boxes y calculamos area posición y lo guardamos
 #file_output = open("boxes.txt",mode="w")
-bounding_box_data = {}
+bounding_box_data = []
 for r in results:
     #file_output.write(str(r.boxes)+"\n\n\n")
     i = 0
     boxes = r.boxes.xywh.tolist()
-    confidence = r.boxes.conf.tolist()
+    confidences = r.boxes.conf.tolist()
     for bb in boxes:
-        print(conf)
+        if confidences[i]>=0.5:
+            #[posicion, area]
+            centrox = bb[0] + (bb[2]/2)
+            centroy = bb[1] + (bb[3]/2)
+            data = [centrox,centroy,bb[2]*bb[3]]
+            bounding_box_data.append(data) # Podemos hacer esto con un pandas
+            i=i+1
         
     
 
