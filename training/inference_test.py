@@ -2,8 +2,8 @@ from ultralytics import YOLO
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-
-model = YOLO("runs/detect/train/weights/best.pt")
+import matplotlib.patches as mpatches
+model = YOLO("runs/detect/train/weights/best.onnx")
 #Con el argumento save podemos decirle que guarde el video o las imágenes según si es solo un fotograma
 #Con save_crop le decimos que guarde todos los recordes de todas las bounding box, sin información añadida y sin poder acceder al bucle
 results = model.predict(source="resources/videos/test2.mp4")
@@ -43,14 +43,16 @@ file_output.close()
 
 #Prueba de gráfica
 #Meter el color transformando areas a rgb
-plt.scatter(centroxList,centroyList,s=20,c=area2,cmap="gray_r")
-plt.title("Centroid and area of bounding boxes for each frame")
-plt.xlabel('posición x')
-plt.ylabel('posición y')
-plt.colorbar()
+scatter = plt.scatter(centroxList,centroyList,s=20,c=area2,cmap="viridis")
+plt.title("Centroid and area of each Bounding Box")
+plt.xlabel('X Position in Frame [0,1920]')
+plt.ylabel('Y Position in Frame [0,1080]')
+cbar = plt.colorbar()
+cbar.ax.set_ylabel('Frame area percentage occupied by the trout')
 plt.grid()
 plt.xlim(0,1920)
 plt.ylim(0,1080)
+plt.gca().invert_yaxis() #Invierto el axis y ya que la la vertical empieza por 0
 plt.show()
 
 # Sacar lista para cada lado
@@ -60,7 +62,8 @@ DcentroidxList = []
 DcentroidyList = []
 IcentroidxList = []
 IcentroidyList = []
-
+IareaList = []
+DareaList = []
 #Sacar puntos de cada lado
 frames = 0
 for r in results:
@@ -73,10 +76,12 @@ for r in results:
                 #La bounding box esta en la derecha, me guardo su centroide
                 DcentroidxList.append(bb[0])
                 DcentroidyList.append(bb[1])
+                DareaList.append((bb[2]*bb[3]*100)/(1920*1080))
             else:
                 #la bounding box esta en la izquierda, me guardo su centroide
                 IcentroidxList.append(bb[0])
                 IcentroidyList.append(bb[1])
+                IareaList.append((bb[2]*bb[3]*100)/(1920*1080))
         i = i + 1
     frames = frames + 1
 
@@ -100,8 +105,41 @@ for x, y in zip(IcentroidxListDiff,IcentroidyListDiff):
     distance = math.sqrt((x**2)+(y**2))
     LeftFinal.append(distance)
 
-#Arreglar que el array numpy sea un vector, no un (x,)
-plt.plot(RightFinal)
+
+
+"""
+    En este segmento, vamos a plottear 2 cosas:
+    1- La caantidad de movimiento que se ha desplazado la bounding box detectada de la trucha en ese fotograma
+    2- La area de la  bounding box detectada
+    Para poder trabajar con fotogramas, hay que hacer que cuando no detectemos a la trucha, asumir que sigue ahí y repetir la misma bounding box
+"""
+fig, ax1 = plt.subplots()
+ax2 = ax1.twinx()
+ax1.plot(RightFinal,color="tab:blue",label="Distance")
+ax2.plot(DareaList,'--',color="tab:red",label="Area")
+plt.title("Distance changes and area changes of the Right Trout")
+ax1.set_xlabel('Frame number')
+ax1.set_ylabel('Distance moved by the fish')
+ax2.set_ylabel('Area of the Bounding Box')
+#Añadimos los artist para la leyenda
+blue_distance = mpatches.Patch(color='blue',label='Distance')
+red_area = mpatches.Patch(color='red',label='Area')
+plt.legend(handles=[blue_distance,red_area])
+plt.xlim(0,len(RightFinal)-1)
 plt.show()
-plt.plot(LeftFinal)
+
+fig, ax1 = plt.subplots()
+ax2 = ax1.twinx()
+ax1.plot(LeftFinal,color="tab:blue",label="Distance")
+ax2.plot(IareaList,'--',color="tab:red",label="Area")
+plt.title("Distance changes and area changes of the Left Trout")
+ax1.set_xlabel('Frame number')
+ax1.set_ylabel('Distance moved by the fish')
+ax2.set_ylabel('Area of the Bounding Box')
+plt.legend(['Distance','Area'])
+#Añadimos los artist para la leyenda
+blue_distance = mpatches.Patch(color='blue',label='Distance')
+red_area = mpatches.Patch(color='red',label='Area')
+plt.legend(handles=[blue_distance,red_area])
+plt.xlim(0,len(LeftFinal)-1)
 plt.show()
