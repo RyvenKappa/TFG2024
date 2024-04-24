@@ -3,10 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 import matplotlib.patches as mpatches
-model = YOLO("runs/detect/train/weights/best.onnx")
+model = YOLO("runs/detect/train/weights/best.pt")
+
+#model = YOLO("runs/detect/train/weights/best.onnx")
 #Con el argumento save podemos decirle que guarde el video o las imágenes según si es solo un fotograma
 #Con save_crop le decimos que guarde todos los recordes de todas las bounding box, sin información añadida y sin poder acceder al bucle
-results = model.predict(source="resources/videos/test2.mp4")
+results = model.predict(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
 
 
 #11 de Abril: planteamiento: sacar un registro de prueba de las bounding box, su centroide respecto al frame y una gráfica de distribución del centroide
@@ -43,17 +45,19 @@ file_output.close()
 
 #Prueba de gráfica
 #Meter el color transformando areas a rgb
-scatter = plt.scatter(centroxList,centroyList,s=20,c=area2,cmap="viridis")
-plt.title("Centroid and area of each Bounding Box")
-plt.xlabel('X Position in Frame [0,1920]')
-plt.ylabel('Y Position in Frame [0,1080]')
-cbar = plt.colorbar()
-cbar.ax.set_ylabel('Frame area percentage occupied by the trout')
+#scatter = plt.scatter(centroxList,centroyList,s=20,c=area2,cmap="viridis")
+plt.figure(figsize=(16,9))
+scatter = plt.scatter(centroxList,centroyList,s=20)
+#plt.title("Centroid and area of each Bounding Box")
+#plt.xlabel('X Position in Frame [0,1920]')
+#plt.ylabel('Y Position in Frame [0,1080]')
+#cbar = plt.colorbar()
+#cbar.ax.set_ylabel('Frame area percentage occupied by the trout')
 plt.grid()
 plt.xlim(0,1920)
 plt.ylim(0,1080)
 plt.gca().invert_yaxis() #Invierto el axis y ya que la la vertical empieza por 0
-plt.show()
+#plt.show()
 
 # Sacar lista para cada lado
 distanciasIzquierda = []
@@ -113,33 +117,66 @@ for x, y in zip(IcentroidxListDiff,IcentroidyListDiff):
     2- La area de la  bounding box detectada
     Para poder trabajar con fotogramas, hay que hacer que cuando no detectemos a la trucha, asumir que sigue ahí y repetir la misma bounding box
 """
-fig, ax1 = plt.subplots()
-ax2 = ax1.twinx()
-ax1.plot(RightFinal,color="tab:blue",label="Distance")
-ax2.plot(DareaList,'--',color="tab:red",label="Area")
-plt.title("Distance changes and area changes of the Right Trout")
-ax1.set_xlabel('Frame number')
-ax1.set_ylabel('Distance moved by the fish')
-ax2.set_ylabel('Area of the Bounding Box')
-#Añadimos los artist para la leyenda
-blue_distance = mpatches.Patch(color='blue',label='Distance')
-red_area = mpatches.Patch(color='red',label='Area')
-plt.legend(handles=[blue_distance,red_area])
-plt.xlim(0,len(RightFinal)-1)
-plt.show()
+# fig, ax1 = plt.subplots()
+# ax2 = ax1.twinx()
+# ax1.plot(RightFinal,color="tab:blue",label="Distance")
+# ax2.plot(DareaList,'--',color="tab:red",label="Area")
+# plt.title("Distance changes and area changes of the Right Trout")
+# ax1.set_xlabel('Frame number')
+# ax1.set_ylabel('Distance moved by the fish')
+# ax2.set_ylabel('Area of the Bounding Box')
+# #Añadimos los artist para la leyenda
+# blue_distance = mpatches.Patch(color='blue',label='Distance')
+# red_area = mpatches.Patch(color='red',label='Area')
+# plt.legend(handles=[blue_distance,red_area])
+# plt.xlim(0,len(RightFinal)-1)
+# plt.show()
 
-fig, ax1 = plt.subplots()
-ax2 = ax1.twinx()
-ax1.plot(LeftFinal,color="tab:blue",label="Distance")
-ax2.plot(IareaList,'--',color="tab:red",label="Area")
-plt.title("Distance changes and area changes of the Left Trout")
-ax1.set_xlabel('Frame number')
-ax1.set_ylabel('Distance moved by the fish')
-ax2.set_ylabel('Area of the Bounding Box')
-plt.legend(['Distance','Area'])
-#Añadimos los artist para la leyenda
-blue_distance = mpatches.Patch(color='blue',label='Distance')
-red_area = mpatches.Patch(color='red',label='Area')
-plt.legend(handles=[blue_distance,red_area])
+# fig, ax1 = plt.subplots()
+# ax2 = ax1.twinx()
+# ax1.plot(LeftFinal,color="tab:blue",label="Distance")
+# ax2.plot(IareaList,'--',color="tab:red",label="Area")
+# plt.title("Distance changes and area changes of the Left Trout")
+# ax1.set_xlabel('Frame number')
+# ax1.set_ylabel('Distance moved by the fish')
+# ax2.set_ylabel('Area of the Bounding Box')
+# plt.legend(['Distance','Area'])
+# #Añadimos los artist para la leyenda
+# blue_distance = mpatches.Patch(color='blue',label='Distance')
+# red_area = mpatches.Patch(color='red',label='Area')
+# plt.legend(handles=[blue_distance,red_area])
+# plt.xlim(0,len(LeftFinal)-1)
+# plt.show()
+
+
+plt.figure(figsize=(10,5))
+plt.plot(LeftFinal,color="tab:blue",label="Distancia")
+plt.xlabel('# fotograma')
+plt.ylabel('Desplazamiento en píxeles')
 plt.xlim(0,len(LeftFinal)-1)
+plt.ylim(0,350)
+#plt.show()
+
+plt.figure(figsize=(10,5))
+plt.plot(IareaList,color="tab:blue",label="Area")
+plt.xlabel('# fotograma')
+plt.ylabel('Área en % del tamaño de la imagen')
+plt.xlim(0,len(LeftFinal)-1)
+plt.ylim(0,20)
+#plt.show()
+
+plt.figure(figsize=(10,5))
+plt.plot(RightFinal,color="tab:blue",label="Distancia")
+plt.xlabel('# fotograma')
+plt.ylabel('Desplazamiento en píxeles')
+plt.xlim(0,len(RightFinal)-1)
+plt.ylim(0,350)
+#plt.show()
+
+plt.figure(figsize=(10,5))
+plt.plot(DareaList,color="tab:blue",label="Area")
+plt.xlabel('# fotograma')
+plt.ylabel('Área en % del tamaño de la imagen')
+plt.xlim(0,len(RightFinal)-1)
+plt.ylim(0,20)
 plt.show()
