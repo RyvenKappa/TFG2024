@@ -1,7 +1,7 @@
-train: C:/Users/Diego/Documents/TFG2024/training/dataset/images/train
-val: C:/Users/Diego/Documents/TFG2024/training/dataset/images/val
-test: C:/Users/Diego/Documents/TFG2024/training/dataset/images/test
+train: C:/Users/Diego/Documents/TFG2024/resources/datasets/dataset2504/images/train
+val: C:/Users/Diego/Documents/TFG2024/resources/datasets/dataset2504/images/val
+test: C:/Users/Diego/Documents/TFG2024/resources/datasets/dataset2504/images/test
 
 nc: 1
 
-names: ["fish"]
+names: ["trout"]
