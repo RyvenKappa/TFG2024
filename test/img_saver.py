@@ -1,7 +1,7 @@
 import cv2
 import os
-path = "test.mp4"
-salida = "C:/Users/Diego/Documents/TFG2024/imagenes_prueba"
+path = "C:/Users/Diego/Documents/TFG2024/resources/videos/test.mp4"
+salida = "C:/Users/Diego/Documents/TFG2024/resources/frames/test_mp4/"
 video_capture = cv2.VideoCapture(path)
 i = 0
 ok = True
