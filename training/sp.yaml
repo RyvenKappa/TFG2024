@@ -1,6 +1,8 @@
-train: C:/Users/Diego/Documents/TFG2024/resources/datasets/dataset2504/images/train
-val: C:/Users/Diego/Documents/TFG2024/resources/datasets/dataset2504/images/val
-test: C:/Users/Diego/Documents/TFG2024/resources/datasets/dataset2504/images/test
+#Set de entrenamiento solo con Experimento 1 con Bounding Boxes sin orientar
+
+train: C:/Users/Diego/Documents/Código/TFG2024/resources/datasets/dataset2504/images/train
+val: C:/Users/Diego/Documents/Código/TFG2024/resources/datasets/dataset2504/images/val
+test: C:/Users/Diego/Documents/Código/TFG2024/resources/datasets/dataset2504/images/test
 
 nc: 1
 

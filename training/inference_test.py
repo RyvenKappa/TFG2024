@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 import matplotlib.patches as mpatches
-model = YOLO("runs/detect/train/weights/best.pt")
+model = YOLO("runs/detect/train/weights/best_openvino_model/")
 
 #model = YOLO("runs/detect/train/weights/best.onnx")
 #Con el argumento save podemos decirle que guarde el video o las imágenes según si es solo un fotograma
 #Con save_crop le decimos que guarde todos los recordes de todas las bounding box, sin información añadida y sin poder acceder al bucle
-results = model.predict(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
+results = model.predict(source="resources/videos/trim.mp4",save=True)
 
 
 #11 de Abril: planteamiento: sacar un registro de prueba de las bounding box, su centroide respecto al frame y una gráfica de distribución del centroide
@@ -27,7 +27,7 @@ for r in results:
     confidences = r.boxes.conf.tolist()
     for bb in boxes:
         #X Boxes por
-        if confidences[i]>=0.4:
+        if confidences[i]>=0.80:
             #[posicion, area]
             centrox = bb[0]
             centroxList.append(centrox)
@@ -75,7 +75,7 @@ for r in results:
     i = 0
     confidences = r.boxes.conf.tolist()
     for bb in boxes:
-        if confidences[i]>=0.4:
+        if confidences[i]>=0.80:
             if bb[0]>916:
                 #La bounding box esta en la derecha, me guardo su centroide
                 DcentroidxList.append(bb[0])

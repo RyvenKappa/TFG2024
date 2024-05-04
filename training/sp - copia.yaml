@@ -1,0 +1,9 @@
+#Set de entrenamiento solo con Experimento 1 con Bounding Boxes sin orientar
+
+train: /kaggle/input/dataset1added/dataset2504/images/train
+val: /kaggle/input/dataset1added/dataset2504/images/val
+test: /kaggle/input/dataset1added/dataset2504/images/test
+
+nc: 1
+
+names: ["trout"]
