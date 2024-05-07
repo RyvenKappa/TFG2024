@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 import matplotlib.patches as mpatches
-model = YOLO("runs/detect/trainOriginal/weights/best_openvino_model/")
+model = YOLO("runs/detect/train10/weights/best_openvino_model/")
 
 #model = YOLO("runs/detect/train/weights/best.onnx")
 #Con el argumento save podemos decirle que guarde el video o las imágenes según si es solo un fotograma
