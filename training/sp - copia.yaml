@@ -1,9 +1,0 @@
-#Set de entrenamiento solo con Experimento 1 con Bounding Boxes sin orientar
-
-train: /kaggle/input/datasetnbbamboscon1antigua/datasetNBBAmbos/images/train
-val: /kaggle/input/datasetnbbamboscon1antigua/datasetNBBAmbos/images/val
-test: /kaggle/input/datasetnbbamboscon1antigua/datasetNBBAmbos/images/test
-
-nc: 1
-
-names: ["trout"]

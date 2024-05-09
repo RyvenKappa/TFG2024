@@ -1,0 +1,9 @@
+#Set de entrenamiento solo con Experimento 1 con Bounding Boxes sin orientar
+
+train: C:/Users/Diego/Documents/TFG2024/resources/datasets/resultadoConvert/images/train
+val: C:/Users/Diego/Documents/TFG2024/resources/datasets/resultadoConvert/images/val
+test: 
+
+nc: 1
+
+names: ["trout"]

@@ -1,8 +1,8 @@
 import numpy as np
 import cv2
 import os
-path = "C:/Users/Diego/Documents/Código/TFG2024/resources/videos/trim.mp4"
-salida = "C:/Users/Diego/Documents/Código/TFG2024/resources/frames/trim_mp4/"
+path = "C:/Users/Diego/Documents/TFG2024/resources/videos/trim.mp4"
+salida = "C:/Users/Diego/Documents/TFG2024/resources/frames/trim_mp4/"
 video_capture = cv2.VideoCapture(path)
 i = 0
 ok = True
