@@ -1,7 +1,7 @@
 #Set de entrenamiento solo con Experimento 1 con Bounding Boxes sin orientar
 
-train: C:/Users/Diego/Documents/TFG2024/resources/datasets/resultadoConvert/images/train
-val: C:/Users/Diego/Documents/TFG2024/resources/datasets/resultadoConvert/images/val
+train: C:/Users/Diego/Documents/TFG2024/resources/datasets/OBBFinal/images/train
+val: C:/Users/Diego/Documents/TFG2024/resources/datasets/OBBFinal/images/val
 test: 
 
 nc: 1
