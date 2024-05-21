@@ -14,7 +14,7 @@ class Yolo_Model:
 
     def __init__(self,VersionType:str=None,obb=False):
         """
-        Configura y carga el modelo
+        Configura y carga el modelo inicial según la configuración
         """
         self.model = None
         if obb == True:
@@ -50,6 +50,9 @@ class Yolo_Model:
         return self.last_prediction_results
     
     def set_task(self,task):
+        """
+        Metodo para configurar el tipo de trabajo del modelo, si no ha cambiado, no se realiza el cambio
+        """
         if task not in ["detect","obb"]:
             raise Exception(f"El tipo de trabajo ({task}) que se esta pidiendo no es el correcto.")
         else:
