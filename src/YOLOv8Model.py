@@ -37,10 +37,10 @@ class Yolo_Model:
             data = []
             if self.task == "obb":
                 for r in resultados:
-                    data.append(r.obb)
+                    data.append([r.obb,r.orig_img,r.orig_shape])
             else:
                 for r in resultados:
-                    data.append(r.boxes)
+                    data.append([r.boxes,r.orig_img,r.orig_shape])
             self.last_prediction_results = pd.DataFrame(data)
             #print(getsizeof(self.last_prediction_results))
         except Exception as e:
@@ -102,7 +102,7 @@ class Yolo_Model:
 if __name__ == '__main__':
     modelo = Yolo_Model(obb=False)
     modelo.set_task("detect")
-    modelo.set_task("obb")
+    #modelo.set_task("obb")
     modelo.video_inference(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
     data = modelo.get_boxes_results()
     modelo.set_task("detect")
