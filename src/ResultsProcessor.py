@@ -25,7 +25,7 @@ class Data_Processor():
         for frame in data.values:
             resultado[n] = self.__frame_processing(frame_data=frame)
             n+=1
-            pass
+            pass#TODO continuar para construir el JSON
 
     def __frame_processing(self,frame_data=None) -> dict:
         """
@@ -35,10 +35,13 @@ class Data_Processor():
             3.Ángulo de rotación
             4.Blurrness, lo sacamos independientemente
         """
-        if type(frame_data)==ultralytics.engine.results.OBB:
+        proccesed_result = dict()
+        if type(frame_data[0])==ultralytics.engine.results.OBB:
             print("soy OBB")
-        elif type(frame_data)==ultralytics.engine.results.Boxes:
+
+        elif type(frame_data[0])==ultralytics.engine.results.Boxes:
             print("soy de normal")
+
         #frame_data[0]
 
         pass
