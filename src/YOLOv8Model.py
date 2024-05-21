@@ -105,7 +105,7 @@ if __name__ == '__main__':
     #modelo.set_task("obb")
     modelo.video_inference(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
     data = modelo.get_boxes_results()
+    data.to_excel("cosa.xlsx")
     modelo.set_task("detect")
     modelo.video_inference(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
     data = modelo.get_boxes_results()
-    
