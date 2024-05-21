@@ -53,26 +53,28 @@ class Yolo_Model:
         """
             Método para realizar inferencia sobre un video y obtener resultados
         """
-        #self.last_prediction_results.clear()
         if source==None:
             raise Exception("No se ha indicado el path del video")
         try:
             resultados = self.model.predict(source=source,save=save,stream=True) #Returns a results generator with stream=True
-            for r in resultados:
-                data = []
-                data.append(r.boxes)
-                data.append(r.obb)
-                data.append(r.probs)
-            print(getsizeof(self.last_prediction_results))
+            data = []
+            if self.task == "obb":
+                for r in resultados:
+                    data.append(r.obb)
+            else:
+                for r in resultados:
+                    data.append(r.boxes)
+            self.last_prediction_results = pd.DataFrame(data)
+            #print(getsizeof(self.last_prediction_results))
         except Exception as e:
             raise Exception(f"Problema en la inferencia sobre video:",str(source))
     def get_boxes_results(self):
-        data = pd.DataFrame(self.last_prediction_results)
-        return data
+        return self.last_prediction_results
     
     
 
 if __name__ == '__main__':
-    modelo = Yolo_Model(obb=True)
+    modelo = Yolo_Model(obb=False)
     modelo.video_inference(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
     data = modelo.get_boxes_results()
+    print("hola")
