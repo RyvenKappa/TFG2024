@@ -10,6 +10,8 @@ from YOLOv8Model import Yolo_Model
 import pandas as pd
 import json
 import ultralytics
+from Fish_Estimator import estimate_fish_number
+import gc
 
 class Data_Processor():
 
@@ -21,39 +23,143 @@ class Data_Processor():
         if data is None or data.empty:
             raise Exception("No se han pasado datos para transformar a JSON")
         resultado = dict()
+        
+
+        #Se analiza si hay 1 o 2 peces y si hay 2 peces se proceden a marcar
+        self.fish_number,self.mean = estimate_fish_number(data)
+
         n = 0
         for frame in data.values:
-            resultado[n] = self.__frame_processing(frame_data=frame)
+            self.__frame_processing(frame_data=frame)
+            resultado[n] = self.proccesed_result
             n+=1
-            pass#TODO continuar para construir el JSON
+        resultado = json.dumps(resultado)
+        gc.collect()
+        return resultado
+        
 
     def __frame_processing(self,frame_data=None) -> dict:
         """
-        Metodo privado para procesar cada fotograma,obtenemos:
-            1.area
-            2.posición centroide
-            3.Ángulo de rotación
-            4.Blurrness, lo sacamos independientemente
+        Metodo privado para procesar cada fotograma,obtenemos un diccionario con 1 pareja key-value por pez, con valor diccionario con:
+
+            1. area
+            2. posición centroide
+            3. Ángulo de rotación
+            4. Blurrness, lo sacamos independientemente
+
         """
-        proccesed_result = dict()
-        if type(frame_data[0])==ultralytics.engine.results.OBB:
-            print("soy OBB")
 
-        elif type(frame_data[0])==ultralytics.engine.results.Boxes:
-            print("soy de normal")
+        self.proccesed_result = dict()
+        boxes = frame_data[0]
+        orig_img = frame_data[1]
 
-        #frame_data[0]
+        if type(boxes)==ultralytics.engine.results.OBB:
+            self.__best_box_obb_detect(boxes)
+        else:
+            self.__best_box_data_detect(boxes)
+        
 
+
+
+    def __blurness_estimation(self,image):
+        """
+        Metodo privado para estimar el blurr que tiene una imagen a través de un filtro laplaciano
+        """
         pass
 
-    def __blurness(self,image):
-        pass
+    def __best_box_data_detect(self,boxes):
+        if self.fish_number > 1:
+            #Diferenciamos entre izquierda y derecha
+            self.proccesed_result[0] = dict()
+            self.proccesed_result[1] = dict()
+            left_best = 0
+            right_best = 0
+            i = 0
+            for box in boxes.xywh:
+                if box[0]> self.mean:
+                    #Estamos a la derecha
+                    if boxes.conf[i] > right_best: right_best = i
+                else:
+                    #Estamos a la izquierda
+                    if boxes.conf[i] > left_best: left_best = i
+                i += 1
+            #Añadimos los datos de la izquierda
+            self.proccesed_result[0]["area"] = (boxes.xywh[left_best][2]*boxes.xywh[left_best][3]).item()
+            self.proccesed_result[0]["centroide"] = (boxes.xywh[left_best][0].item(),boxes.xywh[left_best][1].item())
+            self.proccesed_result[0]["angulo"] = None
+            self.proccesed_result[0]["blur"] = None
+            #Añadimos los datos de la derecha
+            self.proccesed_result[1]["area"] = (boxes.xywh[right_best][2]*boxes.xywh[right_best][3]).item()
+            self.proccesed_result[1]["centroide"] = (boxes.xywh[right_best][0].item(),boxes.xywh[right_best][1].item())
+            self.proccesed_result[1]["angulo"] = None
+            self.proccesed_result[1]["blur"] = None
+        else:
+            #No diferenciamos, solo llenamos izquierda
+            self.proccesed_result[0] = dict()
+            left_best = 0
+            i = 0
+            for box in boxes.xywh:
+                if boxes.conf[i] > right_best: left_best = i
+                i += 1
+            #Añadimos los datos de la izquierda
+            self.proccesed_result[0]["area"] = (boxes.xywh[left_best][2]*boxes.xywh[left_best][3]).item()
+            self.proccesed_result[0]["centroide"] = (boxes.xywh[left_best][0].item(),boxes.xywh[left_best][1].item())
+            self.proccesed_result[0]["angulo"] = None
+            self.proccesed_result[0]["blur"] = None
+
+
+
+    def __best_box_obb_detect(self,boxes):
+        if self.fish_number > 1:
+            #Diferenciamos entre izquierda y derecha
+            self.proccesed_result[0] = dict()
+            self.proccesed_result[1] = dict()
+            left_best = 0
+            right_best = 0
+            i = 0
+            for box in boxes.xywhr:
+                if box[0]> self.mean:
+                    #Estamos a la derecha
+                    if boxes.conf[i] > right_best: right_best = i
+                else:
+                    #Estamos a la izquierda
+                    if boxes.conf[i] > left_best: left_best = i
+                i += 1
+            #Añadimos los datos de la izquierda
+            self.proccesed_result[0]["area"] = (boxes.xywhr[left_best][2]*boxes.xywhr[left_best][3]).item()
+            self.proccesed_result[0]["centroide"] = (boxes.xywhr[left_best][0].item(),boxes.xywhr[left_best][1].item())
+            self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
+            self.proccesed_result[0]["blur"] = None
+            #Añadimos los datos de la derecha
+            self.proccesed_result[1]["area"] = (boxes.xywhr[right_best][2]*boxes.xywhr[right_best][3]).item()
+            self.proccesed_result[1]["centroide"] = (boxes.xywhr[right_best][0].item(),boxes.xywhr[right_best][1].item())
+            self.proccesed_result[1]["angulo"] = boxes.xywhr[right_best][4].item()
+            self.proccesed_result[1]["blur"] = None
+        else:
+            #No diferenciamos, solo llenamos izquierda
+            self.proccesed_result[0] = dict()
+            left_best = 0
+            i = 0
+            for box in boxes.xywhr:
+                if boxes.conf[i] > right_best: left_best = i
+                i += 1
+            #Añadimos los datos de la izquierda
+            self.proccesed_result[0]["area"] = (boxes.xywhr[left_best][2]*boxes.xywhr[left_best][3]).item()
+            self.proccesed_result[0]["centroide"] = (boxes.xywhr[left_best][0].item(),boxes.xywhr[left_best][1].item())
+            self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
+            self.proccesed_result[0]["blur"] = None
+
+
+
+
+
 
 if __name__ == "__main__":
     modelo = Yolo_Model()
-    modelo.set_task("detect")
+    modelo.set_task("obb")
     modelo.video_inference(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
     data = modelo.get_boxes_results()
     procesor = Data_Processor()
-    procesor.json_builder(data=data)
+    resultado = procesor.json_builder(data=data)
+    resultado
     pass
