@@ -8,7 +8,7 @@ import openvino as ov
 from ultralytics import YOLO
 from sys import getsizeof
 import pandas as pd
-
+import gc
 class Yolo_Model:
 
 
@@ -35,6 +35,9 @@ class Yolo_Model:
         try:
             resultados = self.model.predict(source=source,save=save,stream=True) #Returns a results generator with stream=True
             data = []
+            """
+            TODO Queda pendiente hacerlo por hilos de notificación de imagen
+            """
             if self.task == "obb":
                 for r in resultados:
                     data.append([r.obb,r.orig_img,r.orig_shape])
@@ -42,7 +45,6 @@ class Yolo_Model:
                 for r in resultados:
                     data.append([r.boxes,r.orig_img,r.orig_shape])
             self.last_prediction_results = pd.DataFrame(data)
-            #print(getsizeof(self.last_prediction_results))
         except Exception as e:
             raise Exception(f"Problema en la inferencia sobre video:",str(source))
         
