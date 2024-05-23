@@ -40,7 +40,7 @@ def estimate_fish_number(data:pd.DataFrame):
         return 2,samples_mean
     else:
         print("Hay 1 trucha")
-        return 1
+        return 1,samples_mean
     
 
 
