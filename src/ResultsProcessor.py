@@ -15,10 +15,9 @@ import gc
 
 class Data_Processor():
 
-    def json_builder(self,data:pd.DataFrame=None) -> dict:
+    def dataframe_builder(self,data:pd.DataFrame=None) -> dict:
         """
-        Metodo para transformar datos del resultado de inferencia YOLO a JSON.
-        Data es un dataframe
+        Metodo para transformar datos del resultado de inferencia YOLO a DataFrame.
         """
         if data is None or data.empty:
             raise Exception("No se han pasado datos para transformar a JSON")
@@ -34,7 +33,11 @@ class Data_Processor():
             self.__frame_processing(frame_data=frame)
             resultado['left'].append(self.proccesed_result[0])
             resultado['right'].append(self.proccesed_result[1])
-        return pd.DataFrame(resultado)
+        datos = pd.DataFrame(resultado)
+        if self.fish_number == 1:
+            datos = datos.drop(columns='right')
+
+        return datos
         
 
     def __frame_processing(self,frame_data=None) -> dict:
