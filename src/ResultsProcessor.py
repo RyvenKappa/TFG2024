@@ -33,8 +33,6 @@ class Data_Processor():
             self.__frame_processing(frame_data=frame)
             resultado[n] = self.proccesed_result
             n+=1
-        resultado = json.dumps(resultado)
-        gc.collect()
         return resultado
         
 
@@ -72,6 +70,8 @@ class Data_Processor():
             #Diferenciamos entre izquierda y derecha
             self.proccesed_result[0] = dict()
             self.proccesed_result[1] = dict()
+            if boxes.xywh.size()[0] == 0:
+                return
             left_best = 0
             right_best = 0
             i = 0
@@ -96,6 +96,8 @@ class Data_Processor():
         else:
             #No diferenciamos, solo llenamos izquierda
             self.proccesed_result[0] = dict()
+            if boxes.xywh.size()[0] == 0:
+                return
             left_best = 0
             i = 0
             for box in boxes.xywh:
@@ -114,6 +116,8 @@ class Data_Processor():
             #Diferenciamos entre izquierda y derecha
             self.proccesed_result[0] = dict()
             self.proccesed_result[1] = dict()
+            if boxes.xywhr.size()[0] == 0:
+                return
             left_best = 0
             right_best = 0
             i = 0
@@ -138,10 +142,12 @@ class Data_Processor():
         else:
             #No diferenciamos, solo llenamos izquierda
             self.proccesed_result[0] = dict()
+            if boxes.xywhr.size()[0] == 0:
+                return
             left_best = 0
             i = 0
             for box in boxes.xywhr:
-                if boxes.conf[i] > right_best: left_best = i
+                if boxes.conf[i] > left_best: left_best = i
                 i += 1
             #Añadimos los datos de la izquierda
             self.proccesed_result[0]["area"] = (boxes.xywhr[left_best][2]*boxes.xywhr[left_best][3]).item()
@@ -157,7 +163,7 @@ class Data_Processor():
 if __name__ == "__main__":
     modelo = Yolo_Model()
     modelo.set_task("obb")
-    modelo.video_inference(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
+    modelo.video_inference(source="resources/videos/P9_10.mp4")
     data = modelo.get_boxes_results()
     procesor = Data_Processor()
     resultado = procesor.json_builder(data=data)
