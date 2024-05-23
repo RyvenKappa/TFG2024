@@ -15,7 +15,7 @@ import gc
 
 class Data_Processor():
 
-    def json_builder(self,data:pd.DataFrame=None):
+    def json_builder(self,data:pd.DataFrame=None) -> dict:
         """
         Metodo para transformar datos del resultado de inferencia YOLO a JSON.
         Data es un dataframe
