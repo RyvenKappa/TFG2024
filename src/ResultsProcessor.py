@@ -22,18 +22,19 @@ class Data_Processor():
         """
         if data is None or data.empty:
             raise Exception("No se han pasado datos para transformar a JSON")
-        resultado = dict()
         
-
+        resultado = {
+                        'left':[],
+                        'right':[]
+                    }
         #Se analiza si hay 1 o 2 peces y si hay 2 peces se proceden a marcar
         self.fish_number,self.mean = estimate_fish_number(data)
 
-        n = 0
         for frame in data.values:
             self.__frame_processing(frame_data=frame)
-            resultado[n] = self.proccesed_result
-            n+=1
-        return resultado
+            resultado['left'].append(self.proccesed_result[0])
+            resultado['right'].append(self.proccesed_result[1])
+        return pd.DataFrame(resultado)
         
 
     def __frame_processing(self,frame_data=None) -> dict:
@@ -47,9 +48,9 @@ class Data_Processor():
 
         """
 
-        self.proccesed_result = dict()
+        self.proccesed_result = [None,None]
         boxes = frame_data[0]
-        orig_img = frame_data[1]
+        #orig_img = frame_data[1]
 
         if type(boxes)==ultralytics.engine.results.OBB:
             self.__best_box_obb_detect(boxes)
@@ -100,6 +101,7 @@ class Data_Processor():
         else:
             #No diferenciamos, solo llenamos izquierda
             self.proccesed_result[0] = dict()
+            self.proccesed_result[1] = None
             if boxes.xywh.size()[0] == 0:
                 return
             left_best = 0
@@ -150,6 +152,7 @@ class Data_Processor():
         else:
             #No diferenciamos, solo llenamos izquierda
             self.proccesed_result[0] = dict()
+            self.proccesed_result[1] = None
             if boxes.xywhr.size()[0] == 0:
                 return
             left_best = 0
@@ -171,7 +174,7 @@ class Data_Processor():
 if __name__ == "__main__":
     modelo = Yolo_Model()
     #modelo.set_task("obb")
-    modelo.video_inference(source="resources/videos/P9_10.mp4")
+    modelo.video_inference(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
     data = modelo.get_boxes_results()
     procesor = Data_Processor()
     resultado = procesor.json_builder(data=data)
