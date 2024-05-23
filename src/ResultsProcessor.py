@@ -93,12 +93,14 @@ class Data_Processor():
                 i += 1
             #Añadimos los datos de la izquierda
             self.proccesed_result[0]["area"] = (boxes.xywh[left_best][2]*boxes.xywh[left_best][3]).item()
-            self.proccesed_result[0]["centroide"] = (boxes.xywh[left_best][0].item(),boxes.xywh[left_best][1].item())
+            self.proccesed_result[0]["centroideX"] = boxes.xywh[left_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywh[left_best][1].item()
             self.proccesed_result[0]["angulo"] = None
             self.proccesed_result[0]["blur"] = None
             #Añadimos los datos de la derecha
             self.proccesed_result[1]["area"] = (boxes.xywh[right_best][2]*boxes.xywh[right_best][3]).item()
-            self.proccesed_result[1]["centroide"] = (boxes.xywh[right_best][0].item(),boxes.xywh[right_best][1].item())
+            self.proccesed_result[0]["centroideX"] = boxes.xywh[right_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywh[right_best][1].item()
             self.proccesed_result[1]["angulo"] = None
             self.proccesed_result[1]["blur"] = None
         else:
@@ -114,7 +116,8 @@ class Data_Processor():
                 i += 1
             #Añadimos los datos de la izquierda
             self.proccesed_result[0]["area"] = (boxes.xywh[left_best][2]*boxes.xywh[left_best][3]).item()
-            self.proccesed_result[0]["centroide"] = (boxes.xywh[left_best][0].item(),boxes.xywh[left_best][1].item())
+            self.proccesed_result[0]["centroideX"] = boxes.xywh[left_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywh[left_best][1].item()
             self.proccesed_result[0]["angulo"] = None
             self.proccesed_result[0]["blur"] = None
 
@@ -144,12 +147,14 @@ class Data_Processor():
                 i += 1
             #Añadimos los datos de la izquierda
             self.proccesed_result[0]["area"] = (boxes.xywhr[left_best][2]*boxes.xywhr[left_best][3]).item()
-            self.proccesed_result[0]["centroide"] = (boxes.xywhr[left_best][0].item(),boxes.xywhr[left_best][1].item())
+            self.proccesed_result[0]["centroideX"] = boxes.xywhr[left_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywhr[left_best][1].item()
             self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
             self.proccesed_result[0]["blur"] = None
             #Añadimos los datos de la derecha
             self.proccesed_result[1]["area"] = (boxes.xywhr[right_best][2]*boxes.xywhr[right_best][3]).item()
-            self.proccesed_result[1]["centroide"] = (boxes.xywhr[right_best][0].item(),boxes.xywhr[right_best][1].item())
+            self.proccesed_result[0]["centroideX"] = boxes.xywhr[right_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywhr[right_best][1].item()
             self.proccesed_result[1]["angulo"] = boxes.xywhr[right_best][4].item()
             self.proccesed_result[1]["blur"] = None
         else:
@@ -165,7 +170,8 @@ class Data_Processor():
                 i += 1
             #Añadimos los datos de la izquierda
             self.proccesed_result[0]["area"] = (boxes.xywhr[left_best][2]*boxes.xywhr[left_best][3]).item()
-            self.proccesed_result[0]["centroide"] = (boxes.xywhr[left_best][0].item(),boxes.xywhr[left_best][1].item())
+            self.proccesed_result[0]["centroideX"] = boxes.xywhr[left_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywhr[left_best][1].item()
             self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
             self.proccesed_result[0]["blur"] = None
 
@@ -180,6 +186,6 @@ if __name__ == "__main__":
     modelo.video_inference(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
     data = modelo.get_boxes_results()
     procesor = Data_Processor()
-    resultado = procesor.json_builder(data=data)
+    resultado = procesor.dataframe_builder(data=data)
     resultado
     pass
