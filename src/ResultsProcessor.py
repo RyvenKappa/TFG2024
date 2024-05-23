@@ -101,7 +101,7 @@ class Data_Processor():
             left_best = 0
             i = 0
             for box in boxes.xywh:
-                if boxes.conf[i] > right_best: left_best = i
+                if boxes.conf[i] > left_best: left_best = i
                 i += 1
             #Añadimos los datos de la izquierda
             self.proccesed_result[0]["area"] = (boxes.xywh[left_best][2]*boxes.xywh[left_best][3]).item()
@@ -162,7 +162,7 @@ class Data_Processor():
 
 if __name__ == "__main__":
     modelo = Yolo_Model()
-    modelo.set_task("obb")
+    #modelo.set_task("obb")
     modelo.video_inference(source="resources/videos/P9_10.mp4")
     data = modelo.get_boxes_results()
     procesor = Data_Processor()
