@@ -95,14 +95,14 @@ class Data_Processor():
             self.proccesed_result[0]["area"] = (boxes.xywh[left_best][2]*boxes.xywh[left_best][3]).item()
             self.proccesed_result[0]["centroideX"] = boxes.xywh[left_best][0].item()
             self.proccesed_result[0]["centroideY"] = boxes.xywh[left_best][1].item()
-            self.proccesed_result[0]["angulo"] = None
-            self.proccesed_result[0]["blur"] = None
+            self.proccesed_result[0]["angulo"] = 0
+            self.proccesed_result[0]["blur"] = 0 #TODO perndiente
             #Añadimos los datos de la derecha
             self.proccesed_result[1]["area"] = (boxes.xywh[right_best][2]*boxes.xywh[right_best][3]).item()
-            self.proccesed_result[0]["centroideX"] = boxes.xywh[right_best][0].item()
-            self.proccesed_result[0]["centroideY"] = boxes.xywh[right_best][1].item()
-            self.proccesed_result[1]["angulo"] = None
-            self.proccesed_result[1]["blur"] = None
+            self.proccesed_result[1]["centroideX"] = boxes.xywh[right_best][0].item()
+            self.proccesed_result[1]["centroideY"] = boxes.xywh[right_best][1].item()
+            self.proccesed_result[1]["angulo"] = 0
+            self.proccesed_result[1]["blur"] = 0 #TODO perndiente
         else:
             #No diferenciamos, solo llenamos izquierda
             self.proccesed_result[0] = dict()
@@ -118,8 +118,8 @@ class Data_Processor():
             self.proccesed_result[0]["area"] = (boxes.xywh[left_best][2]*boxes.xywh[left_best][3]).item()
             self.proccesed_result[0]["centroideX"] = boxes.xywh[left_best][0].item()
             self.proccesed_result[0]["centroideY"] = boxes.xywh[left_best][1].item()
-            self.proccesed_result[0]["angulo"] = None
-            self.proccesed_result[0]["blur"] = None
+            self.proccesed_result[0]["angulo"] = 0
+            self.proccesed_result[0]["blur"] = 0 #TODO perndiente
 
 
 
@@ -150,13 +150,13 @@ class Data_Processor():
             self.proccesed_result[0]["centroideX"] = boxes.xywhr[left_best][0].item()
             self.proccesed_result[0]["centroideY"] = boxes.xywhr[left_best][1].item()
             self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
-            self.proccesed_result[0]["blur"] = None
+            self.proccesed_result[0]["blur"] = 0 #TODO perndiente
             #Añadimos los datos de la derecha
             self.proccesed_result[1]["area"] = (boxes.xywhr[right_best][2]*boxes.xywhr[right_best][3]).item()
-            self.proccesed_result[0]["centroideX"] = boxes.xywhr[right_best][0].item()
-            self.proccesed_result[0]["centroideY"] = boxes.xywhr[right_best][1].item()
+            self.proccesed_result[1]["centroideX"] = boxes.xywhr[right_best][0].item()
+            self.proccesed_result[1]["centroideY"] = boxes.xywhr[right_best][1].item()
             self.proccesed_result[1]["angulo"] = boxes.xywhr[right_best][4].item()
-            self.proccesed_result[1]["blur"] = None
+            self.proccesed_result[1]["blur"] = 0 #TODO perndiente
         else:
             #No diferenciamos, solo llenamos izquierda
             self.proccesed_result[0] = dict()
@@ -173,7 +173,7 @@ class Data_Processor():
             self.proccesed_result[0]["centroideX"] = boxes.xywhr[left_best][0].item()
             self.proccesed_result[0]["centroideY"] = boxes.xywhr[left_best][1].item()
             self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
-            self.proccesed_result[0]["blur"] = None
+            self.proccesed_result[0]["blur"] = 0 #TODO perndiente
 
 
 
