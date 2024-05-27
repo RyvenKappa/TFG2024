@@ -5,3 +5,4 @@ training/dataset*
 training_rocio/dataset*
 *.pt
 runs
+RTCP
