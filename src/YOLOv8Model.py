@@ -12,7 +12,7 @@ import gc
 class Yolo_Model:
 
 
-    def __init__(self,VersionType:str=None,obb=False):
+    def __init__(self,obb=False):
         """
         Configura y carga el modelo inicial según la configuración
         """
