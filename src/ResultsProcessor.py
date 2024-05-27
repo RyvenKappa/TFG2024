@@ -12,6 +12,7 @@ import json
 import ultralytics
 from Fish_Estimator import estimate_fish_number
 import gc
+import cv2 as cv
 
 class Data_Processor():
 
@@ -28,6 +29,7 @@ class Data_Processor():
                     }
         #Se analiza si hay 1 o 2 peces y si hay 2 peces se proceden a marcar
         self.fish_number,self.mean = estimate_fish_number(data)
+        self.mean = int(self.mean)
 
         for frame in data.values:
             self.__frame_processing(frame_data=frame)
@@ -53,12 +55,12 @@ class Data_Processor():
 
         self.proccesed_result = [None,None]
         boxes = frame_data[0]
-        #orig_img = frame_data[1]
+        orig_img = frame_data[1]
 
         if type(boxes)==ultralytics.engine.results.OBB:
-            self.__best_box_obb_detect(boxes)
+            self.__best_box_obb_detect(boxes,orig_img)
         else:
-            self.__best_box_data_detect(boxes)
+            self.__best_box_data_detect(boxes,orig_img)
         
 
 
@@ -67,9 +69,13 @@ class Data_Processor():
         """
         Metodo privado para estimar el blurr que tiene una imagen a través de un filtro laplaciano
         """
-        pass
+        ddepth = cv.CV_16S
+        kernel_size = 3
+        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        estimation = cv.Laplacian(gray,ddepth,ksize=kernel_size).var()
+        return estimation
 
-    def __best_box_data_detect(self,boxes):
+    def __best_box_data_detect(self,boxes,orig_img):
         """
         Metodo privado para calcular la información de la mejor caja del fotograma para cada pez, independiente del numero de peces
         Metodo diseñado para resultados de ultralytics en modo detect
@@ -96,13 +102,13 @@ class Data_Processor():
             self.proccesed_result[0]["centroideX"] = boxes.xywh[left_best][0].item()
             self.proccesed_result[0]["centroideY"] = boxes.xywh[left_best][1].item()
             self.proccesed_result[0]["angulo"] = 0
-            self.proccesed_result[0]["blur"] = 0 #TODO perndiente
+            self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img[:,0:self.mean])#TODO
             #Añadimos los datos de la derecha
             self.proccesed_result[1]["area"] = (boxes.xywh[right_best][2]*boxes.xywh[right_best][3]).item()
             self.proccesed_result[1]["centroideX"] = boxes.xywh[right_best][0].item()
             self.proccesed_result[1]["centroideY"] = boxes.xywh[right_best][1].item()
             self.proccesed_result[1]["angulo"] = 0
-            self.proccesed_result[1]["blur"] = 0 #TODO perndiente
+            self.proccesed_result[1]["blur"] = self.__blurness_estimation(orig_img[:,self.mean:])
         else:
             #No diferenciamos, solo llenamos izquierda
             self.proccesed_result[0] = dict()
@@ -119,11 +125,11 @@ class Data_Processor():
             self.proccesed_result[0]["centroideX"] = boxes.xywh[left_best][0].item()
             self.proccesed_result[0]["centroideY"] = boxes.xywh[left_best][1].item()
             self.proccesed_result[0]["angulo"] = 0
-            self.proccesed_result[0]["blur"] = 0 #TODO perndiente
+            self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img)
 
 
 
-    def __best_box_obb_detect(self,boxes):
+    def __best_box_obb_detect(self,boxes,orig_img):
         """
         Metodo privado para calcular la información de la mejor caja del fotograma para cada pez, independiente del numero de peces
         Metodo diseñado para resultados de ultralytics en modo Oriented Bounding Boxes
@@ -150,13 +156,13 @@ class Data_Processor():
             self.proccesed_result[0]["centroideX"] = boxes.xywhr[left_best][0].item()
             self.proccesed_result[0]["centroideY"] = boxes.xywhr[left_best][1].item()
             self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
-            self.proccesed_result[0]["blur"] = 0 #TODO perndiente
+            self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img[:,0:self.mean])
             #Añadimos los datos de la derecha
             self.proccesed_result[1]["area"] = (boxes.xywhr[right_best][2]*boxes.xywhr[right_best][3]).item()
             self.proccesed_result[1]["centroideX"] = boxes.xywhr[right_best][0].item()
             self.proccesed_result[1]["centroideY"] = boxes.xywhr[right_best][1].item()
             self.proccesed_result[1]["angulo"] = boxes.xywhr[right_best][4].item()
-            self.proccesed_result[1]["blur"] = 0 #TODO perndiente
+            self.proccesed_result[1]["blur"] = self.__blurness_estimation(orig_img[:,self.mean:0])
         else:
             #No diferenciamos, solo llenamos izquierda
             self.proccesed_result[0] = dict()
@@ -173,7 +179,7 @@ class Data_Processor():
             self.proccesed_result[0]["centroideX"] = boxes.xywhr[left_best][0].item()
             self.proccesed_result[0]["centroideY"] = boxes.xywhr[left_best][1].item()
             self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
-            self.proccesed_result[0]["blur"] = 0 #TODO perndiente
+            self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img)
 
 
 
