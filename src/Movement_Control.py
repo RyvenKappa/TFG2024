@@ -29,7 +29,7 @@ class Movement_Estimator():
         movimientos = 0
         count = 0
         for i in side_data["area"]:
-            if i< -70000:
+            if i< -15000 and side_data['blur'][count]<-10 and side_data["centroide_diff"][count]>20:
                 movimientos +=1
             count +=1
         return side_data
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     import numpy as np
     modelo = Yolo_Model()
     #modelo.set_task("obb")
-    modelo.video_inference(source="resources/videos/23_NT_R1_J1_P9_10.mp4")
+    modelo.video_inference(source="resources/videos/23_NT_R1_J1_P5_6.mp4")
     data = modelo.get_boxes_results()
     procesor = Data_Processor()
     resultado = procesor.dataframe_builder(data=data)
