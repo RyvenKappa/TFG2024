@@ -21,7 +21,9 @@ class Movement_Estimator():
     def __diff_calculations(self,series:pd.Series)->pd.DataFrame:
         
         side_data = pd.json_normalize(series)
+        
         side_data = side_data.diff()
+        side_data['area_gradient'] = np.gradient(side_data['area'].copy())
         side_data["centroide_diff"] = np.sqrt(side_data['centroideX']**2 + side_data['centroideY']**2)
         side_data.insert(1,'centroide_diff',side_data.pop('centroide_diff'))
         side_data = side_data.drop(columns="centroideX")
@@ -29,7 +31,7 @@ class Movement_Estimator():
         movimientos = 0
         count = 0
         for i in side_data["area"]:
-            if i< -15000 and side_data['blur'][count]<-10 and side_data["centroide_diff"][count]>20:
+            if i< -35000 and side_data['blur'][count]<-5 and side_data["centroide_diff"][count]>20:
                 movimientos +=1
             count +=1
         return side_data
