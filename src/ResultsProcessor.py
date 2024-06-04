@@ -43,7 +43,7 @@ class Data_Processor():
         return datos
         
 
-    def __frame_processing(self,frame_data=None) -> dict:
+    def __frame_processing(self,frame_data=None):
         """
         Metodo privado para procesar cada fotograma,obtenemos un diccionario con 1 pareja key-value por pez, con valor diccionario con:
 
