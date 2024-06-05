@@ -109,7 +109,7 @@ class Data_Processor():
             self.proccesed_result[1]["area"] = ((boxes.xywh[right_best][2]*boxes.xywh[right_best][3]).item())/(size[0]*size[1])*100
             self.proccesed_result[1]["centroideX"] = boxes.xywh[right_best][0].item()
             self.proccesed_result[1]["centroideY"] = boxes.xywh[right_best][1].item()
-            self.proccesed_result[0]["width_height_relation"] = (boxes.xywh[right_best][2].item()/boxes.xywh[right_best][3].item())
+            self.proccesed_result[1]["width_height_relation"] = (boxes.xywh[right_best][2].item()/boxes.xywh[right_best][3].item())
             self.proccesed_result[1]["angulo"] = 0
             self.proccesed_result[1]["blur"] = self.__blurness_estimation(orig_img[:,self.mean:])
         else:
@@ -166,7 +166,7 @@ class Data_Processor():
             self.proccesed_result[1]["area"] = ((boxes.xywhr[right_best][2]*boxes.xywhr[right_best][3]).item())/(size[0]*size[1])*100
             self.proccesed_result[1]["centroideX"] = boxes.xywhr[right_best][0].item()
             self.proccesed_result[1]["centroideY"] = boxes.xywhr[right_best][1].item()
-            self.proccesed_result[0]["width_height_relation"] = (boxes.xywhr[right_best][2].item()/boxes.xywhr[right_best][3].item())
+            self.proccesed_result[1]["width_height_relation"] = (boxes.xywhr[right_best][2].item()/boxes.xywhr[right_best][3].item())
             self.proccesed_result[1]["angulo"] = boxes.xywhr[right_best][4].item()
             self.proccesed_result[1]["blur"] = self.__blurness_estimation(orig_img[:,self.mean:0])
         else:
