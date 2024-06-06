@@ -6,9 +6,7 @@ Modulo que define una interfaz util para cargar, predecir y obtener los resultad
 import torch
 import openvino as ov
 from ultralytics import YOLO
-from sys import getsizeof
 import pandas as pd
-import gc
 class Yolo_Model:
 
 
