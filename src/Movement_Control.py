@@ -17,6 +17,7 @@ class Movement_Estimator():
         for side in self.data.columns:
             #Por logica el primer resultado es el de la izquierda
             resultado.append(self.__diff_calculations(self.data[side]))
+        return resultado
     
     def __diff_calculations(self,series:pd.Series)->pd.DataFrame:
         
@@ -81,7 +82,7 @@ class Movement_Estimator():
         for rect in data['width_height_relation']: #Muy rectangular
             if rect<0.3 or rect>2.7:
                 return -1
-        if data.sort_values(by='area',ascending=True)['area'].values[0] > self.median-self.median*0.15:#Me quito situaciones en las que el area no sea lo suficientemente pequeña
+        if data.sort_values(by='area',ascending=True)['area'].values[0] > self.median-self.median*0.1:#Me quito situaciones en las que el area no sea lo suficientemente pequeña
             return -1
         
         p_array = []
@@ -116,7 +117,7 @@ if __name__ == "__main__":
     import numpy as np
     modelo = Yolo_Model()
     #modelo.set_task("obb")
-    modelo.video_inference(source="resources/videos/23_NT_R1_J1_P5_6.mp4")
+    modelo.video_inference(source="resources/videos/Jaula 4/23_NT_R3_J4_P5_P6.mov")
     data = modelo.get_boxes_results()
     procesor = Data_Processor()
     resultado = procesor.dataframe_builder(data=data)

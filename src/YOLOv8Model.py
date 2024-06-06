@@ -103,9 +103,9 @@ class Yolo_Model:
 
 if __name__ == '__main__':
     modelo = Yolo_Model(obb=False)
-    modelo.set_task("detect")
-    modelo.set_task("obb")
-    modelo.video_inference(source="resources/videos/23_NT_R1_J1_P5_6.mp4",save=True)
+    #modelo.set_task("detect")
+    #modelo.set_task("obb")
+    modelo.video_inference(source="resources/videos/Jaula 4/23_NT_R3_J4_P5_P6.mov",save=True)
     #data = modelo.get_boxes_results()
     #data.to_excel("cosa.xlsx")
     #modelo.set_task("detect")
