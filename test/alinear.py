@@ -2,6 +2,9 @@ import dearpygui.dearpygui as dpg
 dpg.create_context()
 
 def auto_align(item, alignment_type: int, x_align: float = 0.5, y_align: float = 0.5):
+    """
+        Código obtenido de: https://github.com/my1e5/dpg-examples/blob/main/spacing/spacing_using_auto_align.py
+    """
     def _center_h(_s, _d, data):
         parent = dpg.get_item_parent(data[0])
         while dpg.get_item_info(parent)['type'] != "mvAppItemType::mvWindowAppItem":

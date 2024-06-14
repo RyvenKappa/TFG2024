@@ -6,3 +6,4 @@ training_rocio/dataset*
 *.pt
 runs
 RTCP
+*__pycache__
