@@ -7,6 +7,7 @@ import dearpygui.dearpygui as dpg
 from yolo import model
 import multiprocessing as mp
 from results_module import Data_Processor
+import cv2 as cv
 
 class Manager():
     """
@@ -44,7 +45,7 @@ class Manager():
                 with dpg.table_row():
                     dpg.add_text(default_value="Seleccione el video sobre el que realizar la inferencia:")
                 with dpg.table_row():
-                    b_seleccionar = dpg.add_button(label="Seleccionar fichero", callback=lambda:dpg.configure_item("__Explorador",show=True))
+                    dpg.add_button(label="Seleccionar fichero", callback=lambda:dpg.configure_item("__Explorador",show=True))
                 with dpg.table_row():
                     i_text = dpg.add_input_text(tag="inputText1",width=400,readonly=True)
                     dpg.bind_item_font(i_text,"NormalFont")
@@ -100,12 +101,18 @@ class Manager():
         """
             Callback para el botón de inferencia, verifica el video, inicia los procesos, inicia la inferencia y cambia de pantalla
         """
+        video_path = dpg.get_value('inputText1')
+        cap = cv.VideoCapture(video_path)
+        self.total_frames = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
+        cap.release()
+
         results_pipe = mp.Pipe(duplex=False) #(Output,Input) de una conexión unidireccional entre el proceso main y el proceso de resultados
         inference_pipe = mp.Pipe(duplex=False) #Tubería para que el proceso de inferencia le vaya pasando las imágenes al de procesado de resultados
 
         self.model = model()
-        self.data_processor = Data_Processor(inference_pipe[0])
-        self.model.video_inference(inference_pipe[1],dpg.get_value('inputText1'))
+        self.data_processor = Data_Processor(inference_pipe[0],results_pipe[1])
+        self.frame_enpoint = results_pipe[0]
+        self.model.video_inference(inference_pipe[1],video_path)
         self.data_processor.start()
         self.infiriendo = True
 
@@ -143,11 +150,11 @@ class Manager():
                                 dpg.add_spacer()
                     with dpg.table_row():
                         dpg.add_spacer()
-                        dpg.add_progress_bar(label="Infiriendo...", tag="progreso",default_value=0.6,width=-1)
+                        dpg.add_progress_bar(label="Infiriendo...", tag="progreso",default_value=0.0,width=-1)
                         dpg.add_spacer()
                     with dpg.table_row():
                         dpg.add_spacer()
-                        texto_carga = dpg.add_text(default_value="Vamos por el frame 300 de 350",label="Texto de progreso")
+                        texto_carga = dpg.add_text(default_value=f"Vamos por el frame 0 de {self.total_frames}",label="Texto de progreso",tag="TextProgreso")
                         dpg.bind_item_font(texto_carga,"MidFont")
                         dpg.add_spacer()
             boton_cancelar = dpg.add_button(width=-1,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
@@ -173,5 +180,12 @@ class Manager():
             Además sirve para la actualización de texturas
         """
         #TODO Ver cuantos frames quedan si estamos infiriendo
-
+        if self.infiriendo:
+            self.nuevo_frame = False
+            while self.frame_enpoint.poll():
+                frame = self.frame_enpoint.recv()
+                self.nuevo_frame = True
+            if self.nuevo_frame:
+                dpg.set_value(item="progreso",value=(frame+1)/360)
+                dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {frame +1} de {self.total_frames}")
         pass
