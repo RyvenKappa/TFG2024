@@ -24,11 +24,11 @@ class Video_Inference(mp.Process):
             resultados = self.model.predict(source=self.source,save=self.save,stream=True) #Returns a results generator with stream=True
             if self.task == "obb":
                 for r in resultados:
-                    mensaje = np.array([r.obb,r.orig_img,r.orig_shape],dtype=object)
+                    mensaje = np.array([r.obb.numpy(),r.orig_img,r.orig_shape],dtype=object)
                     self.endpoint.send(mensaje)
             else:
                 for r in resultados:
-                    mensaje = np.array([r.obb,r.orig_img,r.orig_shape],dtype=object)
+                    mensaje = np.array([r.boxes.numpy(),r.orig_img,r.orig_shape],dtype=object)
                     self.endpoint.send(mensaje)
         except Exception as e:
             raise Exception(f"Problema en la inferencia sobre video:",str(self.source))
