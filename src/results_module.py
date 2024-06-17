@@ -2,7 +2,7 @@ from multiprocessing import Process
 import pandas as pd
 from Fish_Estimator import estimate_fish_number
 import ultralytics
-
+import cv2 as cv
 class Data_Processor(Process):
 
     def __init__(self,recepcion_endpoint,update_endpoint,frames_number):
