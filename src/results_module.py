@@ -3,6 +3,8 @@ import pandas as pd
 from Fish_Estimator import estimate_fish_number
 import ultralytics
 import cv2 as cv
+import pickle
+
 class Data_Processor(Process):
 
     def __init__(self,recepcion_endpoint,update_endpoint,frames_number):
@@ -10,7 +12,7 @@ class Data_Processor(Process):
         self.data_enpoint = recepcion_endpoint
         self.update_enpoint = update_endpoint
         self.datos_entrantes = []
-        self.trout_number = None
+        self.fish_number = None
         self.mean = None
         self.frames_number = frames_number
 
@@ -27,14 +29,25 @@ class Data_Processor(Process):
                 if datos is not None:
                     frame = frame + 1
                     self.datos_entrantes.append(datos)
-                if len(self.datos_entrantes)==50 and self.trout_number==None:
+                if len(self.datos_entrantes)==50 and self.fish_number==None:
                     self.fish_number,self.mean = estimate_fish_number(pd.DataFrame(self.datos_entrantes))
                     self.mean = int(self.mean)
                     print(f"Tenemos {self.fish_number} truchas y una mediana de: {self.mean}")
             elif self.fish_number!=None:
+                pass
                 """
                     Procesamos el siguiente fotograma para los datos globales
                 """
+                if len(resultado['left'])!=self.frames_number:
+                    try:
+                        self.__frame_processing(frame_data=self.datos_entrantes.pop(0))
+                        resultado['left'].append(self.proccesed_result[0])
+                        resultado['right'].append(self.proccesed_result[1])
+                    except:
+                        pass
+                else:
+                    print(f"Frames procesados, con datos:\n{resultado}")
+        print(f"Frames procesados, con datos:\n{resultado}")
 
 
     def __frame_processing(self,frame_data=None):
@@ -47,7 +60,6 @@ class Data_Processor(Process):
             4. Blurrness, lo sacamos independientemente
 
         """
-
         self.proccesed_result = [None,None]
         boxes = frame_data[0]
         orig_img = frame_data[1]
