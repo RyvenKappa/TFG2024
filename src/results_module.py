@@ -1,6 +1,7 @@
 from multiprocessing import Process
 import pandas as pd
 from Fish_Estimator import estimate_fish_number
+import ultralytics
 
 class Data_Processor(Process):
 
@@ -28,7 +29,26 @@ class Data_Processor(Process):
                     print(f"Tenemos {self.trout_number} truchas y una mediana de: {self.mean}")
             elif self.trout_number!=None:
                 """
-                    Procesamos fotogramas hasta que hemos acabado
+                    Procesamos el siguiente fotograma para los datos globales
                 """
 
 
+    def __frame_processing(self,frame_data=None):
+        """
+        Metodo privado para procesar cada fotograma,obtenemos un diccionario con 1 pareja key-value por pez, con valor diccionario con:
+
+            1. area
+            2. posición centroide
+            3. Ángulo de rotación
+            4. Blurrness, lo sacamos independientemente
+
+        """
+
+        self.proccesed_result = [None,None]
+        boxes = frame_data[0]
+        orig_img = frame_data[1]
+        size = frame_data[2]
+        if type(boxes)==ultralytics.engine.results.OBB:
+            self.__best_box_obb_detect(boxes,orig_img,size)
+        else:
+            self.__best_box_data_detect(boxes,orig_img,size)
