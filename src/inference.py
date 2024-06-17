@@ -1,32 +1,34 @@
 import multiprocessing as mp
-import pandas as pd
 from ultralytics import YOLO
+import numpy as np
 
 class Video_Inference(mp.Process):
 
-    def __init__(self,modelo:YOLO,queue:mp.Queue,task):
-        self.model = modelo
-        self.queue = queue
-        self.task = task
+    def __init__(self,modelo:YOLO,pipe_input_endpoint,task,source=None,save=False):
         super().__init__()
+        self.model = modelo
+        self.endpoint = pipe_input_endpoint
+        self.task = task
+        self.source = source
+        self.save = save
 
-    def video_inference(self,source = None,save = False):
+
+    def run(self):
         """
             Método para realizar inferencia sobre un video y obtener resultados
         """
-        if source==None:
+        mensaje = None
+        if self.source==None:
             raise Exception("No se ha indicado el path del video")
         try:
-            resultados = self.model.predict(source=source,save=save,stream=True) #Returns a results generator with stream=True
-            data = []
+            resultados = self.model.predict(source=self.source,save=self.save,stream=True) #Returns a results generator with stream=True
             if self.task == "obb":
                 for r in resultados:
-                    self.queue.put([r.obb,r.orig_img,r.orig_shape])
+                    mensaje = np.array([r.obb,r.orig_img,r.orig_shape],dtype=object)
+                    self.endpoint.send(mensaje)
             else:
                 for r in resultados:
-                    self.queue.put([r.boxes,r.orig_img,r.orig_shape])
+                    mensaje = np.array([r.obb,r.orig_img,r.orig_shape],dtype=object)
+                    self.endpoint.send(mensaje)
         except Exception as e:
-            raise Exception(f"Problema en la inferencia sobre video:",str(source))
-        
-if __name__ == '__main__':
-    pass
+            raise Exception(f"Problema en la inferencia sobre video:",str(self.source))

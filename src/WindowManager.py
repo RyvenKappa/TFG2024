@@ -4,7 +4,9 @@ Modulo que contiene las diferentes ventanas de la aplicación, incluyendo las tr
 @Mail: diego.aceituno@alumnos.upm.es
 """
 import dearpygui.dearpygui as dpg
-
+from yolo import model
+import multiprocessing as mp
+from results_module import Data_Processor
 
 class Manager():
     """
@@ -98,13 +100,19 @@ class Manager():
         """
             Callback para el botón de inferencia, verifica el video, inicia los procesos, inicia la inferencia y cambia de pantalla
         """
+        results_pipe = mp.Pipe(duplex=False) #(Output,Input) de una conexión unidireccional entre el proceso main y el proceso de resultados
+        inference_pipe = mp.Pipe(duplex=False) #Tubería para que el proceso de inferencia le vaya pasando las imágenes al de procesado de resultados
+
+        self.model = model()
+        self.data_processor = Data_Processor(inference_pipe[0])
+        self.model.video_inference(inference_pipe[1],dpg.get_value('inputText1'))
+        self.data_processor.start()
         self.infiriendo = True
 
 
         #Cambio de pantalla
         dpg.delete_item("MainWindow")
         self.start_loading_screen()
-        pass
 
 
     def start_loading_screen(self):

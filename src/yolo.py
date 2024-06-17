@@ -6,16 +6,21 @@ Modulo que define una interfaz util para cargar, predecir y obtener los resultad
 import torch
 import openvino as ov
 from ultralytics import YOLO
-import pandas as pd
-from multiprocessing import Process,Queue
 from inference import Video_Inference
-class model(Process):
-    def video_inference(self,source = None,save = False):
-        #Quiero que cree dos procesos y obligue a que se comuniquenc
-        cola = Queue()
-        inference_tool = Video_Inference()
+class model:
+    def __init__(self,obb=False) -> None:
+        self.model = None
+        if obb == True:
+            self.task = "obb"
+        else:
+            self.task="detect"
+        self.last_prediction_results=None
+        self.__set_model()
 
-        pass
+    def video_inference(self,pipe_input_endpoint,source = None,save = False):
+        #Le dice que empieze a inferir con la tubería de inferencia en la que meter los datos para el de resultados
+        self.inference_process = Video_Inference(self.model,pipe_input_endpoint,self.task,source)
+        self.inference_process.start()
         
     def get_boxes_results(self):
         return self.last_prediction_results

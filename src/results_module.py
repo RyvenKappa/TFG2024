@@ -6,5 +6,10 @@ import pandas as pd
 
 class Data_Processor(Process):
 
-    def __init__(self):
+    def __init__(self,recepcion_endpoint):
         super().__init__()
+        self.data_enpoint = recepcion_endpoint
+
+    def run(self):
+        while True:
+            datos = self.data_enpoint.recv()
