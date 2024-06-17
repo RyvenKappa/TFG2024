@@ -28,10 +28,10 @@ class Data_Processor(Process):
                     frame = frame + 1
                     self.datos_entrantes.append(datos)
                 if len(self.datos_entrantes)==50 and self.trout_number==None:
-                    self.trout_number,self.mean = estimate_fish_number(pd.DataFrame(self.datos_entrantes))
+                    self.fish_number,self.mean = estimate_fish_number(pd.DataFrame(self.datos_entrantes))
                     self.mean = int(self.mean)
-                    print(f"Tenemos {self.trout_number} truchas y una mediana de: {self.mean}")
-            elif self.trout_number!=None:
+                    print(f"Tenemos {self.fish_number} truchas y una mediana de: {self.mean}")
+            elif self.fish_number!=None:
                 """
                     Procesamos el siguiente fotograma para los datos globales
                 """
