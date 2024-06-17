@@ -16,6 +16,10 @@ class Data_Processor(Process):
 
     def run(self):
         frame = 0
+        resultado = {
+                        'left':[],
+                        'right':[]
+                    }
         while True:
             if self.data_enpoint.poll():
                 datos = self.data_enpoint.recv()
@@ -52,3 +56,125 @@ class Data_Processor(Process):
             self.__best_box_obb_detect(boxes,orig_img,size)
         else:
             self.__best_box_data_detect(boxes,orig_img,size)
+
+    def __blurness_estimation(self,image):
+        """
+        Metodo privado para estimar el blurr que tiene una imagen a través de un filtro laplaciano
+        """
+        ddepth = cv.CV_16S
+        kernel_size = 3
+        gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        estimation = cv.Laplacian(gray,ddepth,ksize=kernel_size).var()
+        return estimation
+
+    def __best_box_data_detect(self,boxes,orig_img,size):
+        """
+        Metodo privado para calcular la información de la mejor caja del fotograma para cada pez, independiente del numero de peces
+        Metodo diseñado para resultados de ultralytics en modo detect
+        """
+        if self.fish_number > 1: #TODO hacer el blur por zona de la imagen
+            #Diferenciamos entre izquierda y derecha
+            self.proccesed_result[0] = dict()
+            self.proccesed_result[1] = dict()
+            if boxes.xywh.size()[0] == 0:
+                return
+            left_best = 0
+            right_best = 0
+            i = 0
+            for box in boxes.xywh:
+                if box[0]> self.mean:
+                    #Estamos a la derecha
+                    if boxes.conf[i] > right_best: right_best = i
+                else:
+                    #Estamos a la izquierda
+                    if boxes.conf[i] > left_best: left_best = i
+                i += 1
+            #Añadimos los datos de la izquierda
+            self.proccesed_result[0]["area"] = ((boxes.xywh[left_best][2]*boxes.xywh[left_best][3]).item())/(size[0]*size[1])*100
+            self.proccesed_result[0]["centroideX"] = boxes.xywh[left_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywh[left_best][1].item()
+            self.proccesed_result[0]["width_height_relation"] = (boxes.xywh[left_best][2].item()/boxes.xywh[left_best][3].item())
+            self.proccesed_result[0]["angulo"] = 0
+            self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img[:,0:self.mean])#TODO
+            #Añadimos los datos de la derecha
+            self.proccesed_result[1]["area"] = ((boxes.xywh[right_best][2]*boxes.xywh[right_best][3]).item())/(size[0]*size[1])*100
+            self.proccesed_result[1]["centroideX"] = boxes.xywh[right_best][0].item()
+            self.proccesed_result[1]["centroideY"] = boxes.xywh[right_best][1].item()
+            self.proccesed_result[1]["width_height_relation"] = (boxes.xywh[right_best][2].item()/boxes.xywh[right_best][3].item())
+            self.proccesed_result[1]["angulo"] = 0
+            self.proccesed_result[1]["blur"] = self.__blurness_estimation(orig_img[:,self.mean:])
+        else:
+            #No diferenciamos, solo llenamos izquierda
+            self.proccesed_result[0] = dict()
+            self.proccesed_result[1] = None
+            if boxes.xywh.size()[0] == 0:
+                return
+            left_best = 0
+            i = 0
+            for box in boxes.xywh:
+                if boxes.conf[i] > left_best: left_best = i
+                i += 1
+            #Añadimos los datos de la izquierda
+            self.proccesed_result[0]["area"] = ((boxes.xywh[left_best][2]*boxes.xywh[left_best][3]).item())/(size[0]*size[1])*100
+            self.proccesed_result[0]["centroideX"] = boxes.xywh[left_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywh[left_best][1].item()
+            self.proccesed_result[0]["width_height_relation"] = (boxes.xywh[left_best][2].item()/boxes.xywh[left_best][3].item())
+            self.proccesed_result[0]["angulo"] = 0
+            self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img)
+
+
+
+    def __best_box_obb_detect(self,boxes,orig_img,size):
+        """
+        Metodo privado para calcular la información de la mejor caja del fotograma para cada pez, independiente del numero de peces
+        Metodo diseñado para resultados de ultralytics en modo Oriented Bounding Boxes
+        """
+        if self.fish_number > 1: #TODO hacer el blur por zona de la imagen
+            #Diferenciamos entre izquierda y derecha
+            self.proccesed_result[0] = dict()
+            self.proccesed_result[1] = dict()
+            if boxes.xywhr.size()[0] == 0:
+                return
+            left_best = 0
+            right_best = 0
+            i = 0
+            for box in boxes.xywhr:
+                if box[0]> self.mean:
+                    #Estamos a la derecha
+                    if boxes.conf[i] > right_best: right_best = i
+                else:
+                    #Estamos a la izquierda
+                    if boxes.conf[i] > left_best: left_best = i
+                i += 1
+            #Añadimos los datos de la izquierda
+            self.proccesed_result[0]["area"] = ((boxes.xywhr[left_best][2]*boxes.xywhr[left_best][3]).item())/(size[0]*size[1])*100
+            self.proccesed_result[0]["centroideX"] = boxes.xywhr[left_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywhr[left_best][1].item()
+            self.proccesed_result[0]["width_height_relation"] = (boxes.xywhr[left_best][2].item()/boxes.xywhr[left_best][3].item())
+            self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
+            self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img[:,0:self.mean])
+            #Añadimos los datos de la derecha
+            self.proccesed_result[1]["area"] = ((boxes.xywhr[right_best][2]*boxes.xywhr[right_best][3]).item())/(size[0]*size[1])*100
+            self.proccesed_result[1]["centroideX"] = boxes.xywhr[right_best][0].item()
+            self.proccesed_result[1]["centroideY"] = boxes.xywhr[right_best][1].item()
+            self.proccesed_result[1]["width_height_relation"] = (boxes.xywhr[right_best][2].item()/boxes.xywhr[right_best][3].item())
+            self.proccesed_result[1]["angulo"] = boxes.xywhr[right_best][4].item()
+            self.proccesed_result[1]["blur"] = self.__blurness_estimation(orig_img[:,self.mean:0])
+        else:
+            #No diferenciamos, solo llenamos izquierda
+            self.proccesed_result[0] = dict()
+            self.proccesed_result[1] = None
+            if boxes.xywhr.size()[0] == 0:
+                return
+            left_best = 0
+            i = 0
+            for box in boxes.xywhr:
+                if boxes.conf[i] > left_best: left_best = i
+                i += 1
+            #Añadimos los datos de la izquierda
+            self.proccesed_result[0]["area"] = ((boxes.xywhr[left_best][2]*boxes.xywhr[left_best][3]).item())/(size[0]*size[1])*100
+            self.proccesed_result[0]["centroideX"] = boxes.xywhr[left_best][0].item()
+            self.proccesed_result[0]["centroideY"] = boxes.xywhr[left_best][1].item()
+            self.proccesed_result[0]["width_height_relation"] = (boxes.xywhr[left_best][2].item()/boxes.xywhr[left_best][3].item())
+            self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
+            self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img)
