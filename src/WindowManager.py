@@ -108,12 +108,46 @@ class Manager():
         #Creamos la ventana de carga
         with dpg.window(tag="LoadingWindow",no_scrollbar=True,autosize=True):
             dpg.set_primary_window("LoadingWindow",True)
-            with dpg.table(tag="LoadingTable",resizable=False,header_row=False,reorderable=True):
-                dpg.add_table_row()
-                dpg.add_table_row()
-                dpg.add_table_row()
-                dpg.add_table_column(width_stretch=True)
-                with dpg.table_row():
+            with dpg.child_window(autosize_x=True,height=200):
+                with dpg.table(tag="LoadingTable",resizable=False,header_row=False,reorderable=True):
+                    dpg.add_table_row()
+                    dpg.add_table_row()
+                    dpg.add_table_row()
+                    dpg.add_table_column()
+                    dpg.add_table_column()
+                    dpg.add_table_column()
+                    with dpg.table_row():
+                        #dpg.add_image(texture_tag="pescadoGirando",tag="TexturaPez")#TODO pescado girando
+                                dpg.add_spacer()
+                                with dpg.table(resizable=False,header_row=False,reorderable=True):
+                                    dpg.add_table_row()
+                                    dpg.add_table_column()
+                                    dpg.add_table_column()
+                                    dpg.add_table_column()
+                                    with dpg.table_row():
+                                        dpg.add_spacer()
+                                        dpg.add_loading_indicator(radius=7)
+                                        dpg.add_spacer()
+                                dpg.add_spacer()
+                    with dpg.table_row():
+                        dpg.add_spacer()
+                        dpg.add_progress_bar(label="Infiriendo...", tag="progreso",default_value=0.6,width=-1)
+                        dpg.add_spacer()
+                    with dpg.table_row():
+                        dpg.add_spacer()
+                        texto_carga = dpg.add_text(default_value="Vamos por el frame 300 de 350",label="Texto de progreso")
+                        dpg.bind_item_font(texto_carga,"MidFont")
+                        dpg.add_spacer()
+            boton_cancelar = dpg.add_button(width=200,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
+            dpg.bind_item_font(boton_cancelar,"MidFont")
+        pass
+
+
+    def cancelar_callback(self,sender,app_data):
+        """
+            Callback para cancelar la inferencia
+        """
+        pass
 
         
     
@@ -126,3 +160,4 @@ class Manager():
             Método que sirve para la actualización de las variables temporales y la comunicación con los procesos de inferencia.
             Además sirve para la actualización de texturas
         """
+        pass
