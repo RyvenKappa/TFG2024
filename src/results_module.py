@@ -28,7 +28,7 @@ class Data_Processor(Process):
                 self.update_enpoint.send(frame)#Envio el frame por el que voy
                 if datos is not None:
                     frame = frame + 1
-                    self.datos_entrantes.append(datos)
+                    self.datos_entrantes.append([pickle.loads(datos[0]),datos[1],datos[2]])
                 if len(self.datos_entrantes)==50 and self.fish_number==None:
                     self.fish_number,self.mean = estimate_fish_number(pd.DataFrame(self.datos_entrantes))
                     self.mean = int(self.mean)
@@ -46,8 +46,8 @@ class Data_Processor(Process):
                     except:
                         pass
                 else:
-                    print(f"Frames procesados, con datos:\n{resultado}")
-        print(f"Frames procesados, con datos:\n{resultado}")
+                    break
+        print(f"Frames procesados, con datos:\n{len(resultado['left'])}")
 
 
     def __frame_processing(self,frame_data=None):

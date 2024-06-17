@@ -1,6 +1,7 @@
 import multiprocessing as mp
 from ultralytics import YOLO
 import numpy as np
+import pickle
 
 class Video_Inference(mp.Process):
 
@@ -28,7 +29,7 @@ class Video_Inference(mp.Process):
                     self.endpoint.send(mensaje)
             else:
                 for r in resultados:
-                    mensaje = np.array([r.boxes.numpy(),r.orig_img,r.orig_shape],dtype=object)
+                    mensaje = np.array([pickle.dumps(r.boxes),r.orig_img,r.orig_shape],dtype=object)
                     self.endpoint.send(mensaje)
         except Exception as e:
             raise Exception(f"Problema en la inferencia sobre video:",str(self.source))
