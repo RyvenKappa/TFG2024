@@ -11,6 +11,7 @@ class Manager():
     Clase que implementa la funcionalidad de las diferentes ventanas de la aplicación
     """
     def __init__(self) -> None:
+        self.infiriendo = False
         self.start_screen()
 
     def start_screen(self) -> None:
@@ -41,9 +42,10 @@ class Manager():
                 with dpg.table_row():
                     dpg.add_text(default_value="Seleccione el video sobre el que realizar la inferencia:")
                 with dpg.table_row():
-                    dpg.add_button(label="Seleccionar fichero", callback=lambda:dpg.configure_item("__Explorador",show=True))
+                    b_seleccionar = dpg.add_button(label="Seleccionar fichero", callback=lambda:dpg.configure_item("__Explorador",show=True))
                 with dpg.table_row():
-                    dpg.add_input_text(tag="inputText1",width=400,readonly=True)
+                    i_text = dpg.add_input_text(tag="inputText1",width=400,readonly=True)
+                    dpg.bind_item_font(i_text,"NormalFont")
                     with dpg.file_dialog(
                             label="Explorador",
                             directory_selector=False,
@@ -74,6 +76,7 @@ class Manager():
         """
             Callback para configurar el usuario de la aplicación y añadir el path de los resultados anteriores
         """
+        #TODO
         pass
 
     def file_selected_callback(self,sender,app_data):
@@ -95,6 +98,7 @@ class Manager():
         """
             Callback para el botón de inferencia, verifica el video, inicia los procesos, inicia la inferencia y cambia de pantalla
         """
+        self.infiriendo = True
 
 
         #Cambio de pantalla
@@ -138,7 +142,7 @@ class Manager():
                         texto_carga = dpg.add_text(default_value="Vamos por el frame 300 de 350",label="Texto de progreso")
                         dpg.bind_item_font(texto_carga,"MidFont")
                         dpg.add_spacer()
-            boton_cancelar = dpg.add_button(width=200,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
+            boton_cancelar = dpg.add_button(width=-1,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
             dpg.bind_item_font(boton_cancelar,"MidFont")
         pass
 
@@ -160,4 +164,6 @@ class Manager():
             Método que sirve para la actualización de las variables temporales y la comunicación con los procesos de inferencia.
             Además sirve para la actualización de texturas
         """
+        #TODO Ver cuantos frames quedan si estamos infiriendo
+
         pass
