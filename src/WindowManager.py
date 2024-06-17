@@ -110,7 +110,7 @@ class Manager():
         inference_pipe = mp.Pipe(duplex=False) #Tubería para que el proceso de inferencia le vaya pasando las imágenes al de procesado de resultados
 
         self.model = model()
-        self.data_processor = Data_Processor(inference_pipe[0],results_pipe[1])
+        self.data_processor = Data_Processor(inference_pipe[0],results_pipe[1],self.total_frames)
         self.frame_enpoint = results_pipe[0]
         self.model.video_inference(inference_pipe[1],video_path)
         self.data_processor.start()
