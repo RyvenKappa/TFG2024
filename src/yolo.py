@@ -21,6 +21,13 @@ class model:
         #Le dice que empieze a inferir con la tubería de inferencia en la que meter los datos para el de resultados
         self.inference_process = Video_Inference(self.model,pipe_input_endpoint,self.task,source)
         self.inference_process.start()
+    
+    def stop_video_inference(self):
+        try:
+            self.inference_process.kill()
+            self.inference_process.close()
+        except:
+            pass
         
     def get_boxes_results(self):
         return self.last_prediction_results
