@@ -24,7 +24,7 @@ class model:
     
     def stop_video_inference(self):
         try:
-            self.inference_process.kill()
+            self.inference_process.terminate()
             self.inference_process.close()
         except:
             pass
