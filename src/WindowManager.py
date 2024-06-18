@@ -19,6 +19,7 @@ class Manager():
 
     def start_screen(self) -> None:
         with dpg.window(tag="MainWindow",no_scrollbar=True,autosize=True):
+            dpg.set_primary_window("MainWindow",True)
             with dpg.child_window(autosize_x=True,height=150):
                 with dpg.table(tag="UserTable",resizable=False,header_row=False,reorderable=True):
                     dpg.add_table_row()
@@ -75,6 +76,39 @@ class Manager():
                             b_inferir = dpg.add_button(width=-1,height=150,label="Inferir",show=False,tag="BotonInferir",callback=self.inferir_callback)
                             dpg.bind_item_font(b_inferir,"LargeFont")
                             dpg.add_spacer()
+        with dpg.window(tag="LoadingWindow",no_scrollbar=True,autosize=True,show=False):
+            with dpg.child_window(autosize_x=True,height=200):
+                with dpg.table(tag="LoadingTable",resizable=False,header_row=False,reorderable=True):
+                    dpg.add_table_row()
+                    dpg.add_table_row()
+                    dpg.add_table_row()
+                    dpg.add_table_column()
+                    dpg.add_table_column()
+                    dpg.add_table_column()
+                    with dpg.table_row():
+                        #dpg.add_image(texture_tag="pescadoGirando",tag="TexturaPez")#TODO pescado girando
+                                dpg.add_spacer()
+                                with dpg.table(resizable=False,header_row=False,reorderable=True):
+                                    dpg.add_table_row()
+                                    dpg.add_table_column()
+                                    dpg.add_table_column()
+                                    dpg.add_table_column()
+                                    with dpg.table_row():
+                                        dpg.add_spacer()
+                                        dpg.add_loading_indicator(radius=7)
+                                        dpg.add_spacer()
+                                dpg.add_spacer()
+                    with dpg.table_row():
+                        dpg.add_spacer()
+                        dpg.add_progress_bar(label="Infiriendo...", tag="progreso",default_value=0.0,width=-1)
+                        dpg.add_spacer()
+                    with dpg.table_row():
+                        dpg.add_spacer()
+                        texto_carga = dpg.add_text(default_value=f"Vamos por el frame 0 de 0",label="Texto de progreso",tag="TextProgreso")
+                        dpg.bind_item_font(texto_carga,"MidFont")
+                        dpg.add_spacer()
+            boton_cancelar = dpg.add_button(width=-1,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
+            dpg.bind_item_font(boton_cancelar,"MidFont")
     def set_user_callback(self,sender,app_data):
         """
             Callback para configurar el usuario de la aplicación y añadir el path de los resultados anteriores
@@ -115,11 +149,14 @@ class Manager():
         self.model.video_inference(inference_pipe[1],video_path)
         self.data_processor.start()
         self.infiriendo = True
+        dpg.set_value(item="TextProgreso",value=f"Vamos por el frame 0 de {self.total_frames}")
+        dpg.set_value(item="progreso",value=0.0)
 
 
         #Cambio de pantalla
-        dpg.delete_item("MainWindow")
-        self.start_loading_screen()
+        dpg.hide_item("MainWindow")
+        dpg.show_item("LoadingWindow")
+        dpg.set_primary_window("LoadingWindow",True)
 
 
     def start_loading_screen(self):
@@ -154,7 +191,7 @@ class Manager():
                         dpg.add_spacer()
                     with dpg.table_row():
                         dpg.add_spacer()
-                        texto_carga = dpg.add_text(default_value=f"Vamos por el frame 0 de {self.total_frames}",label="Texto de progreso",tag="TextProgreso")
+                        texto_carga = dpg.add_text(default_value=f"Vamos por el frame 0 de 0",label="Texto de progreso",tag="TextProgreso")
                         dpg.bind_item_font(texto_carga,"MidFont")
                         dpg.add_spacer()
             boton_cancelar = dpg.add_button(width=-1,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
@@ -166,7 +203,17 @@ class Manager():
         """
             Callback para cancelar la inferencia
         """
-        pass
+        try:
+            self.data_processor.terminate()
+            self.data_processor.close()
+        except:
+            pass
+        finally:
+            self.model.stop_video_inference()
+            dpg.hide_item("LoadingWindow")
+            dpg.show_item("MainWindow")
+            dpg.set_primary_window("MainWindow",True)
+            self.infiriendo = False
 
         
     
@@ -186,6 +233,6 @@ class Manager():
                 frame = self.frame_enpoint.recv()
                 self.nuevo_frame = True
             if self.nuevo_frame:
-                dpg.set_value(item="progreso",value=(frame+1)/360)
+                dpg.set_value(item="progreso",value=(frame+1)/self.total_frames)
                 dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {frame +1} de {self.total_frames}")
         pass
