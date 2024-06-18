@@ -6,6 +6,7 @@ Módulo Main para cargar la interfaz e iniciar la aplicación
 import dearpygui.dearpygui as dpg
 from  WindowManager import Manager
 import config_dpg
+
 def main():
     dpg.create_context()
     config_dpg.set_config()#Cargamos la configuración
@@ -21,4 +22,6 @@ def main():
     dpg.destroy_context()
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.freeze_support()
     main()
