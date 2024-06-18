@@ -50,20 +50,31 @@ class model:
         """
             Metodo privado de la clase que se usa para configurar el modelo según hardware y según el tipo de trabajo marcado en el objeto
         """
+        cargado = False
         core = ov.Core()
-        devices1 = core.available_devices
+        devices = core.available_devices
+        print(f"Los dispositivos encontrados son: {devices}")
         cuda_bool = torch.cuda.is_available()
+        print(f"Boleano de cuda: {cuda_bool}")
         path = "src/models/normal/" #Path donde se encuentran los modelos, TODO ser capaz de buscarlos/descargarlos del repositorio de Diego
         
         if self.task == "obb":
             path = "src/models/obb/"
         try:
             if cuda_bool:
-                print(f"Modelo a cargar de pt,gpu=",torch.get_device(0))
-                self.model = YOLO(f"{path}best.pt",task=self.task)
-                self.model.to('cuda')
-            else:
-                if len(devices1)>=2:
+                try:
+                    print(f"Modelo a cargar de pt,gpu=",torch.get_device(0))
+                    self.model = YOLO(f"{path}best.pt",task=self.task)
+                    self.model.to('cuda')
+                    cargado = True
+                except:
+                    pass
+            elif not cuda_bool or not cargado:
+                gpu:str = core.get_property("GPU","FULL_DEVICE_NAME")
+                cpu:str = core.get_property("CPU","FULL_DEVICE_NAME")
+                gpu = gpu.lower()
+                cpu = cpu.lower()
+                if gpu.find("intel")>0 or cpu.find("intel")>0:
                     """
                     CPU y una GPU de intel, y otra de amd o desconocida
                     """
@@ -73,8 +84,10 @@ class model:
                     """
                     CPU solo, modelo ONNX
                     """
+                    print("Modelo a cargar de ONNX")
                     print(f"Modelo a cargar de ONNX, cpu=",{core.get_property("CPU","FULL_DEVICE_NAME")})
                     self.model = YOLO(f"{path}best.onnx",task=self.task)
-        except:
+        except Exception as e:
+            print(e)
             print("Problema cargando un modelo eficiente, cargando modelo por defecto tipo PyTorch")
             self.model = YOLO(f"{path}best.pt",task=self.task)
