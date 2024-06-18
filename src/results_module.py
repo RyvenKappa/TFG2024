@@ -32,7 +32,7 @@ class Data_Processor(Process):
                 if len(self.datos_entrantes)==50 and self.fish_number==None:
                     self.fish_number,self.mean = estimate_fish_number(pd.DataFrame(self.datos_entrantes))
                     self.mean = int(self.mean)
-                    print(f"Tenemos {self.fish_number} truchas y una mediana de: {self.mean}")
+                    #print(f"Tenemos {self.fish_number} truchas y una mediana de: {self.mean}")
             elif self.fish_number!=None:
                 pass
                 """
