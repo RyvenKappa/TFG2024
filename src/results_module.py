@@ -1,4 +1,5 @@
 from multiprocessing import Process
+import multiprocessing
 import pandas as pd
 from Fish_Estimator import estimate_fish_number
 import ultralytics
@@ -190,3 +191,7 @@ class Data_Processor(Process):
             self.proccesed_result[0]["width_height_relation"] = (boxes.xywhr[left_best][2].item()/boxes.xywhr[left_best][3].item())
             self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
             self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img)
+
+
+if __name__ == "__main__":
+    multiprocessing.freeze_support()

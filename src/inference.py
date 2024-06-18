@@ -1,4 +1,5 @@
 import multiprocessing as mp
+import multiprocessing
 from ultralytics import YOLO
 import numpy as np
 import pickle
@@ -33,3 +34,6 @@ class Video_Inference(mp.Process):
                     self.endpoint.send(mensaje)
         except Exception as e:
             raise Exception(f"Problema en la inferencia sobre video:",str(self.source))
+        
+if __name__ == "__main__":
+    multiprocessing.freeze_support()
