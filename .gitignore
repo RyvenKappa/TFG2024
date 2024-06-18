@@ -7,3 +7,6 @@ training_rocio/dataset*
 runs
 RTCP
 *__pycache__
+dist
+build
+main.spec
