@@ -20,6 +20,8 @@ class Video_Inference(mp.Process):
         """
             Método para realizar inferencia sobre un video y obtener resultados
         """
+        if self.cuda:
+            self.model.to("cuda")
         mensaje = None
         if self.source==None:
             raise Exception("No se ha indicado el path del video")
@@ -27,14 +29,10 @@ class Video_Inference(mp.Process):
             resultados:list[Results] = self.model.predict(source=self.source,save=self.save,stream=True) #Returns a results generator with stream=True
             if self.task == "obb":
                 for r in resultados:
-                    if self.cuda:
-                        r.cpu()
                     mensaje = np.array([r.obb.numpy(),r.orig_img,r.orig_shape],dtype=object)
                     self.endpoint.send(mensaje)
             else:
                 for r in resultados:
-                    if self.cuda:
-                        r.cpu()
                     mensaje = np.array([pickle.dumps(r.boxes),r.orig_img,r.orig_shape],dtype=object)
                     self.endpoint.send(mensaje)
         except Exception as e:
