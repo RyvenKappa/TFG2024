@@ -197,7 +197,6 @@ class Manager():
             Método que sirve para la actualización de las variables temporales y la comunicación con los procesos de inferencia.
             Además sirve para la actualización de texturas
         """
-        #TODO Ver cuantos frames quedan si estamos infiriendo
         if self.infiriendo:
             self.nuevo_frame = False
             while self.frame_enpoint.poll():
@@ -210,7 +209,6 @@ class Manager():
                 else:
                     print(f"He obtenido unos datos tipo: {type(datos)} y longitud {len(datos)}")
                     self.datos_finales = datos
-                    #Pasar a la siguiente ventana
                     self.set_window("DataWindow")
 
     def set_window(self,window_name:str):
