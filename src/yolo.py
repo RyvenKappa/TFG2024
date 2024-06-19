@@ -15,11 +15,12 @@ class model:
         else:
             self.task="detect"
         self.last_prediction_results=None
+        self.cuda = False
         self.__set_model()
 
     def video_inference(self,pipe_input_endpoint,source = None,save = False):
         #Le dice que empieze a inferir con la tubería de inferencia en la que meter los datos para el de resultados
-        self.inference_process = Video_Inference(self.model,pipe_input_endpoint,self.task,source)
+        self.inference_process = Video_Inference(self.model,pipe_input_endpoint,self.task,source,cuda=self.cuda)
         self.inference_process.start()
     
     def stop_video_inference(self):
@@ -62,32 +63,36 @@ class model:
             path = "src/models/obb/"
         try:
             if cuda_bool:
-                try:
-                    print(f"Modelo a cargar de pt,gpu=",torch.get_device(0))
-                    self.model = YOLO(f"{path}best.pt",task=self.task)
-                    self.model.to('cuda')
-                    cargado = True
-                except:
-                    pass
-            elif not cuda_bool or not cargado:
-                gpu:str = core.get_property("GPU","FULL_DEVICE_NAME")
-                cpu:str = core.get_property("CPU","FULL_DEVICE_NAME")
-                gpu = gpu.lower()
-                cpu = cpu.lower()
-                if gpu.find("intel")>0 or cpu.find("intel")>0:
-                    """
-                    CPU y una GPU de intel, y otra de amd o desconocida
-                    """
-                    print(f"Modelo a cargar de openvino, gpu=",{core.get_property("GPU","FULL_DEVICE_NAME")})
-                    self.model = YOLO(f"{path}best_openvino_model",task=self.task)
-                else:
-                    """
-                    CPU solo, modelo ONNX
-                    """
-                    print("Modelo a cargar de ONNX")
-                    print(f"Modelo a cargar de ONNX, cpu=",{core.get_property("CPU","FULL_DEVICE_NAME")})
-                    self.model = YOLO(f"{path}best.onnx",task=self.task)
+                print(f"Modelo a cargar de pt,gpu=",torch.cuda.get_device_name(torch.cuda.current_device()))
+                self.model = YOLO(f"{path}best.pt",task=self.task)
+                self.model.to('cuda')
+                cargado = True
+                self.cuda = True
+            else:
+                raise Exception()
         except Exception as e:
+            self.cuda = False
             print(e)
-            print("Problema cargando un modelo eficiente, cargando modelo por defecto tipo PyTorch")
-            self.model = YOLO(f"{path}best.pt",task=self.task)
+            if not cuda_bool or not cargado:
+                try:
+                    gpu:str = core.get_property("GPU","FULL_DEVICE_NAME")
+                    cpu:str = core.get_property("CPU","FULL_DEVICE_NAME")
+                    gpu = gpu.lower()
+                    cpu = cpu.lower()
+                    if gpu.find("intel")>0 or cpu.find("intel")>0:
+                        """
+                        CPU y una GPU de intel, y otra de amd o desconocida
+                        """
+                        print(f"Modelo a cargar de openvino, gpu=",{core.get_property("GPU","FULL_DEVICE_NAME")})
+                        self.model = YOLO(f"{path}best_openvino_model",task=self.task)
+                    else:
+                        """
+                        CPU solo, modelo ONNX
+                        """
+                        print("Modelo a cargar de ONNX")
+                        print(f"Modelo a cargar de ONNX, cpu=",{core.get_property("CPU","FULL_DEVICE_NAME")})
+                        self.model = YOLO(f"{path}best.onnx",task=self.task)
+                except Exception as e:
+                    print(e)
+                    print("Problema cargando un modelo eficiente, cargando modelo por defecto tipo PyTorch")
+                    self.model = YOLO(f"{path}best.pt",task=self.task)

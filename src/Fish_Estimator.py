@@ -4,7 +4,6 @@ Modulo que contiene funciones para estimar el numero de peces
 import pandas as pd
 import numpy as np
 import ultralytics.engine.results
-
 def estimate_fish_number(data:pd.DataFrame):
     """
     Recibo un array con las cajas, imagen original y el shape original.
@@ -28,6 +27,7 @@ def estimate_fish_number(data:pd.DataFrame):
 
     #Clustering by KMeans is done to obtain the number of bounding boxes for the x
     x2 = []
+    
     samples_mean = np.mean(samples)
     for s in samples:
         x2.append(abs(s-samples_mean))
