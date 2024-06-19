@@ -15,11 +15,13 @@ class Manager():
     Clase que implementa la funcionalidad de las diferentes ventanas de la aplicación
     """
     def __init__(self) -> None:
+        self.window_tags=[]
         self.infiriendo = False
         self.start_screen()
 
     def start_screen(self) -> None:
         with dpg.window(tag="MainWindow",no_scrollbar=True,autosize=True):
+            self.window_tags.append("MainWindow")
             dpg.set_primary_window("MainWindow",True)
             with dpg.child_window(autosize_x=True,height=150):
                 with dpg.table(tag="UserTable",resizable=False,header_row=False,reorderable=True):
@@ -78,6 +80,7 @@ class Manager():
                             dpg.bind_item_font(b_inferir,"LargeFont")
                             dpg.add_spacer()
         with dpg.window(tag="LoadingWindow",no_scrollbar=True,autosize=True,show=False):
+            self.window_tags.append("LoadingWindow")
             with dpg.child_window(autosize_x=True,height=200):
                 with dpg.table(tag="LoadingTable",resizable=False,header_row=False,reorderable=True):
                     dpg.add_table_row()
@@ -111,6 +114,7 @@ class Manager():
             boton_cancelar = dpg.add_button(width=-1,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
             dpg.bind_item_font(boton_cancelar,"MidFont")
             with dpg.window(tag="DataWindow",no_scrollbar=True,autosize=True,show=False):
+                self.window_tags.append("DataWindow")
                 with dpg.table(tag="DataTable",resizable=False,header_row=False,reorderable=True):
                     dpg.add_table_row()
                     dpg.add_table_column()
@@ -166,50 +170,7 @@ class Manager():
 
 
         #Cambio de pantalla
-        dpg.hide_item("MainWindow")
-        dpg.show_item("LoadingWindow")
-        dpg.set_primary_window("LoadingWindow",True)
-
-
-    def start_loading_screen(self):
-
-        #Creamos la ventana de carga
-        with dpg.window(tag="LoadingWindow",no_scrollbar=True,autosize=True):
-            dpg.set_primary_window("LoadingWindow",True)
-            with dpg.child_window(autosize_x=True,height=200):
-                with dpg.table(tag="LoadingTable",resizable=False,header_row=False,reorderable=True):
-                    dpg.add_table_row()
-                    dpg.add_table_row()
-                    dpg.add_table_row()
-                    dpg.add_table_column()
-                    dpg.add_table_column()
-                    dpg.add_table_column()
-                    with dpg.table_row():
-                        #dpg.add_image(texture_tag="pescadoGirando",tag="TexturaPez")#TODO pescado girando
-                                dpg.add_spacer()
-                                with dpg.table(resizable=False,header_row=False,reorderable=True):
-                                    dpg.add_table_row()
-                                    dpg.add_table_column()
-                                    dpg.add_table_column()
-                                    dpg.add_table_column()
-                                    with dpg.table_row():
-                                        dpg.add_spacer()
-                                        dpg.add_loading_indicator(radius=7)
-                                        dpg.add_spacer()
-                                dpg.add_spacer()
-                    with dpg.table_row():
-                        dpg.add_spacer()
-                        dpg.add_progress_bar(label="Infiriendo...", tag="progreso",default_value=0.0,width=-1)
-                        dpg.add_spacer()
-                    with dpg.table_row():
-                        dpg.add_spacer()
-                        texto_carga = dpg.add_text(default_value=f"Vamos por el frame 0 de 0",label="Texto de progreso",tag="TextProgreso")
-                        dpg.bind_item_font(texto_carga,"MidFont")
-                        dpg.add_spacer()
-            boton_cancelar = dpg.add_button(width=-1,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
-            dpg.bind_item_font(boton_cancelar,"MidFont")
-        pass
-
+        self.set_window("LoadingWindow")
 
     def cancelar_callback(self,sender,app_data):
         """
@@ -222,9 +183,7 @@ class Manager():
             pass
         finally:
             self.model.stop_video_inference()
-            dpg.hide_item("LoadingWindow")
-            dpg.show_item("MainWindow")
-            dpg.set_primary_window("MainWindow",True)
+            self.set_window("MainWindow")
             self.infiriendo = False
 
         
@@ -251,3 +210,16 @@ class Manager():
                 else:
                     print(f"He obtenido unos datos tipo: {type(datos)} y longitud {len(datos)}")
                     self.datos_finales = datos
+                    #Pasar a la siguiente ventana
+                    self.set_window("DataWindow")
+
+    def set_window(self,window_name:str):
+        """
+            Método para cambiar a una ventana específica y esconder el resto
+        """
+        extra_array = self.window_tags.copy()
+        extra_array.pop(extra_array.index(window_name))
+        for i in extra_array:
+            dpg.hide_item(i)
+        dpg.show_item(window_name)
+        dpg.set_primary_window(window_name,True)
