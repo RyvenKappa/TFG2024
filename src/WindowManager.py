@@ -8,6 +8,7 @@ from yolo import model
 import multiprocessing as mp
 from results_module import Data_Processor
 import cv2 as cv
+import pandas as pd
 
 class Manager():
     """
@@ -241,8 +242,12 @@ class Manager():
         if self.infiriendo:
             self.nuevo_frame = False
             while self.frame_enpoint.poll():
-                frame = self.frame_enpoint.recv()
-                self.nuevo_frame = True
-            if self.nuevo_frame:
-                dpg.set_value(item="progreso",value=(frame+1)/self.total_frames)
-                dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {frame +1} de {self.total_frames}")
+                datos:pd.DataFrame = self.frame_enpoint.recv()
+                if type(datos)==int:
+                    self.nuevo_frame = True
+                    if self.nuevo_frame:
+                        dpg.set_value(item="progreso",value=(datos+1)/self.total_frames)
+                        dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {datos +1} de {self.total_frames}")
+                else:
+                    print(f"He obtenido unos datos tipo: {type(datos)} y longitud {len(datos)}")
+                    self.datos_finales = datos

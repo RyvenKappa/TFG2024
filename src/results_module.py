@@ -26,7 +26,7 @@ class Data_Processor(Process):
         while True:
             if self.data_enpoint.poll():
                 datos = self.data_enpoint.recv()
-                self.update_enpoint.send(frame)#Envio el frame por el que voy
+                self.update_enpoint.send(frame)#Envio el frame por el que voy, mando un int
                 if datos is not None:
                     frame = frame + 1
                     self.datos_entrantes.append([pickle.loads(datos[0]),datos[1],datos[2]])
@@ -49,6 +49,10 @@ class Data_Processor(Process):
                 else:
                     break
         print(f"Frames procesados, con datos:\n{len(resultado['left'])}")
+        datos = pd.DataFrame(resultado)
+        if self.fish_number == 1:
+            datos = datos.drop(columns='right')
+        self.update_enpoint.send(datos)#Enviamos los datos procesados al proceso principal
 
 
     def __frame_processing(self,frame_data=None):
