@@ -109,6 +109,17 @@ class Manager():
                         dpg.add_spacer()
             boton_cancelar = dpg.add_button(width=-1,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
             dpg.bind_item_font(boton_cancelar,"MidFont")
+            with dpg.window(tag="DataWindow",no_scrollbar=True,autosize=True,show=False):
+                with dpg.table(tag="DataTable",resizable=False,header_row=False,reorderable=True):
+                    dpg.add_table_row()
+                    dpg.add_table_column()
+                    dpg.add_table_column()
+                    with dpg.table_row():
+                        with dpg.child_window(autosize_x=True):
+                            dpg.add_text(default_value=f"Zona en la que iran las gráficas")
+                        with dpg.child_window(autosize_x=True):
+                            dpg.add_text(default_value=f"Zona en la que iran las gráficas")
+
     def set_user_callback(self,sender,app_data):
         """
             Callback para configurar el usuario de la aplicación y añadir el path de los resultados anteriores
@@ -235,4 +246,3 @@ class Manager():
             if self.nuevo_frame:
                 dpg.set_value(item="progreso",value=(frame+1)/self.total_frames)
                 dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {frame +1} de {self.total_frames}")
-        pass
