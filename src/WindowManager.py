@@ -121,7 +121,7 @@ class Manager():
             dpg.bind_item_font(boton_cancelar,"MidFont")
         with dpg.window(tag="DataWindow",no_scrollbar=True,autosize=True,show=False):
             self.window_tags.append("DataWindow")
-            with dpg.table(tag="DataTable",resizable=True,header_row=False,reorderable=True):
+            with dpg.table(tag="DataTable",resizable=False,header_row=False,reorderable=True):
                 dpg.add_table_row()
                 dpg.add_table_column()
                 dpg.add_table_column()
@@ -134,7 +134,6 @@ class Manager():
                             with dpg.table_row():
                                 with dpg.child_window(no_scrollbar=True,height=500,tag="ChildWindowGraphs"):
                                     with dpg.tab_bar():
-
                                         with dpg.tab(label="Datos de Area"):
 
                                             with dpg.plot(label="Cambio en las areas",width=-1,height=-1):
@@ -142,20 +141,51 @@ class Manager():
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="area_x")
                                                 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="y1"):
-                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="area_y1")
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_izquierda"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="area_izquierda",tag="Area_Izquierda")
 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="y2"):
-                                                    dpg.add_line_series(self.eje_frame,y=np.ones(190),label="area_y2")
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.ones(190),label="area_derecha",tag="Area_Derecha")
                                         
-                                        with dpg.tab(label="Cambio del centroide"):
-                                            dpg.add_text("Gráfica del cambio del centroide")
+                                        with dpg.tab(label="Datos del centroide"):
+
+                                            with dpg.plot(label="Cambio en los centroides",width=-1,height=-1):
+                                                dpg.add_plot_legend()
+                                                #Las dos comparten eje x
+                                                dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="centroide_x")
+                                                
+                                                with dpg.plot_axis(dpg.mvYAxis,label="centroide_izquierda"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="centroide_izquierda",tag="Centroide_Izquierda")
+
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.ones(190),label="centroide_derecha",tag="Centroide_Derecha")
+                                        
                                         with dpg.tab(label="Cambio de la relación altura ancho"):
-                                            dpg.add_text("Gráfica del cambio de la relación altura ancho")
+
+                                            with dpg.plot(label="Cambio en la relación ancho-altura",width=-1,height=-1):
+                                                dpg.add_plot_legend()
+                                                #Las dos comparten eje x
+                                                dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="hw_x")
+                                                
+                                                with dpg.plot_axis(dpg.mvYAxis,label="relación_izquierda"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="relación_izquierda",tag="Relacion_Izquierda")
+
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.ones(190),label="relación_derecha",tag="Relacion_Derecha")
+                                        
                                         with dpg.tab(label="Cambio del blur pez izquierda"):
-                                            dpg.add_text("Gráfica del cambio del blur en pez izquierda")
-                                        with dpg.tab(label="Cambio del blur pez derecha"):
-                                            dpg.add_text("Gráfica del cambio del blur en pez derecha")
+
+                                            with dpg.plot(label="Cambio en el blur",width=-1,height=-1):
+                                                dpg.add_plot_legend()
+                                                #Las dos comparten eje x
+                                                dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="blur_x")
+                                                
+                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_izquierda"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_izquierda",tag="Blur_Izquierda")
+
+                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_derecha"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.ones(190),label="blur_derecha",tag="Blur_Derecha")
+                                        
                             with dpg.table_row():
                                 dpg.add_text(default_value=f"Zona de gráfica total")
                     with dpg.child_window(no_scrollbar=True,height=-1):
