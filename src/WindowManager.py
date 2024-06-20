@@ -9,15 +9,20 @@ import multiprocessing as mp
 from results_module import Data_Processor
 import cv2 as cv
 import pandas as pd
+import numpy as np
+import pprint
 
 class Manager():
     """
     Clase que implementa la funcionalidad de las diferentes ventanas de la aplicación
     """
     def __init__(self) -> None:
+        self.active_window = None
+        self.data_mode = False
         self.window_tags=[]
         self.infiriendo = False
         self.raw_data = None
+        self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo
         self.start_screen()
 
     def start_screen(self) -> None:
@@ -127,10 +132,22 @@ class Manager():
                             dpg.add_table_row()
                             dpg.add_table_column()
                             with dpg.table_row():
-                                with dpg.child_window(no_scrollbar=True,height=-300):
+                                with dpg.child_window(no_scrollbar=True,height=500,tag="ChildWindowGraphs"):
                                     with dpg.tab_bar():
-                                        with dpg.tab(label="Área"):
-                                            dpg.add_text("Gráfica del área")
+
+                                        with dpg.tab(label="Datos de Area"):
+
+                                            with dpg.plot(label="Cambio en las areas",width=-1,height=-1):
+                                                dpg.add_plot_legend()
+                                                #Las dos comparten eje x
+                                                dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="area_x")
+                                                
+                                                with dpg.plot_axis(dpg.mvYAxis,label="y1"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="area_y1")
+
+                                                with dpg.plot_axis(dpg.mvYAxis,label="y2"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.ones(190),label="area_y2")
+                                        
                                         with dpg.tab(label="Cambio del centroide"):
                                             dpg.add_text("Gráfica del cambio del centroide")
                                         with dpg.tab(label="Cambio de la relación altura ancho"):
@@ -216,6 +233,9 @@ class Manager():
             Método que sirve para la actualización de las variables temporales y la comunicación con los procesos de inferencia.
             Además sirve para la actualización de texturas
         """
+        #Ajustamos el tamaño de algunos elementos para que se ajusten al tamaño de la ventana
+        if self.data_mode:
+            dpg.set_item_height("ChildWindowGraphs",dpg.get_item_rect_size(self.active_window)[1]/2)
         if self.infiriendo:
             self.nuevo_frame = False
             while self.frame_enpoint.poll():
@@ -227,8 +247,9 @@ class Manager():
                         dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {datos +1} de {self.total_frames}")
                 else:
                     print(f"He obtenido unos datos tipo: {type(datos)} y longitud {len(datos)}")
-                    print(datos[0])
-                    print(datos[1])
+                    pprint.pprint(datos[0])
+                    print("\n\n")
+                    pprint.pprint(datos[1])
                     self.raw_data = datos
                     self.set_window("DataWindow")
 
@@ -241,4 +262,9 @@ class Manager():
         for i in extra_array:
             dpg.hide_item(i)
         dpg.show_item(window_name)
+        self.active_window = window_name
+        if window_name == "DataWindow":
+            self.data_mode = True
+        else:
+            self.data_mode = False
         dpg.set_primary_window(window_name,True)
