@@ -20,9 +20,9 @@ class Manager():
         self.start_screen()
 
     def start_screen(self) -> None:
-        with dpg.window(tag="MainWindow",no_scrollbar=True,autosize=True):
+        with dpg.window(tag="MainWindow",no_scrollbar=True,autosize=True,show=False):
             self.window_tags.append("MainWindow")
-            dpg.set_primary_window("MainWindow",True)
+            self.set_window("MainWindow")
             with dpg.child_window(autosize_x=True,height=150):
                 with dpg.table(tag="UserTable",resizable=False,header_row=False,reorderable=True):
                     dpg.add_table_row()
@@ -113,17 +113,35 @@ class Manager():
                         dpg.add_spacer()
             boton_cancelar = dpg.add_button(width=-1,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
             dpg.bind_item_font(boton_cancelar,"MidFont")
-            with dpg.window(tag="DataWindow",no_scrollbar=True,autosize=True,show=False):
-                self.window_tags.append("DataWindow")
-                with dpg.table(tag="DataTable",resizable=False,header_row=False,reorderable=True):
-                    dpg.add_table_row()
-                    dpg.add_table_column()
-                    dpg.add_table_column()
-                    with dpg.table_row():
-                        with dpg.child_window(autosize_x=True):
-                            dpg.add_text(default_value=f"Zona en la que iran las gráficas")
-                        with dpg.child_window(autosize_x=True):
-                            dpg.add_text(default_value=f"Zona en la que iran las gráficas")
+        with dpg.window(tag="DataWindow",no_scrollbar=True,autosize=True,show=False):
+            self.window_tags.append("DataWindow")
+            with dpg.table(tag="DataTable",resizable=True,header_row=False,reorderable=True):
+                dpg.add_table_row()
+                dpg.add_table_column()
+                dpg.add_table_column()
+                with dpg.table_row():
+                    with dpg.child_window(no_scrollbar=True,height=-1,border=False):
+                        with dpg.table(tag="GraphTable",resizable=True,header_row=False,reorderable=True):
+                            dpg.add_table_row()
+                            dpg.add_table_row()
+                            dpg.add_table_column()
+                            with dpg.table_row():
+                                with dpg.child_window(no_scrollbar=True,height=-300):
+                                    with dpg.tab_bar():
+                                        with dpg.tab(label="Área"):
+                                            dpg.add_text("Gráfica del área")
+                                        with dpg.tab(label="Cambio del centroide"):
+                                            dpg.add_text("Gráfica del cambio del centroide")
+                                        with dpg.tab(label="Cambio de la relación altura ancho"):
+                                            dpg.add_text("Gráfica del cambio de la relación altura ancho")
+                                        with dpg.tab(label="Cambio del blur pez izquierda"):
+                                            dpg.add_text("Gráfica del cambio del blur en pez izquierda")
+                                        with dpg.tab(label="Cambio del blur pez derecha"):
+                                            dpg.add_text("Gráfica del cambio del blur en pez derecha")
+                            with dpg.table_row():
+                                dpg.add_text(default_value=f"Zona de gráfica total")
+                    with dpg.child_window(no_scrollbar=True,height=-1):
+                        dpg.add_text(default_value=f"Zona en la que iran las gráficas")
 
     def set_user_callback(self,sender,app_data):
         """
