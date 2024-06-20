@@ -22,11 +22,10 @@ class Movement_Estimator():
     
     def __diff_calculations(self,series:pd.Series)-> list:
         """
-            Realiza calculos de movimientos por cada lado del pez y devuelve 
+            Realiza calculos de movimientos por cada lado del pez y devuelve una lista cuyos elementos es una tupla tipo (int,list)
         """
         side_data = pd.json_normalize(series)
-        
-        #side_data = side_data.diff()
+        #side_data = side_data.diff() Hace lo mismo que el gradiente pero sin NaNs
         side_data['frame'] = range(0,len(side_data))
         side_data['area_gradient'] = np.gradient(side_data['area'].copy())
         side_data['centroideX'] = side_data['centroideX'].copy().diff()
@@ -35,7 +34,6 @@ class Movement_Estimator():
         side_data.insert(1,'centroide_change',side_data.pop('centroide_change'))
         side_data = side_data.drop(columns="centroideX")
         side_data = side_data.drop(columns="centroideY")
-        pass
         # side_data["centroide_diff"] = np.sqrt(side_data['centroideX']**2 + side_data['centroideY']**2)
         # side_data.insert(1,'centroide_diff',side_data.pop('centroide_diff'))
         # side_data = side_data.drop(columns="centroideX")
@@ -43,7 +41,7 @@ class Movement_Estimator():
         frame = 0
         movement_data = []
         extra_counter= 0
-        self.median = side_data['area'].median()
+        self.median = side_data['area'].median()#Sacamos la mediana del area de la bounding box del pez
         contando = False
         extra_array = []
         numeros_array = 0
@@ -66,8 +64,9 @@ class Movement_Estimator():
             frame = frame + 1
         result_data = []
         for i in movement_data:
-            a = self.apply_rules(i)#TODO paralelo
-            if a > -1: result_data.append(a)
+            a = self.apply_rules(i)
+            if a > -1: result_data.append((i["frame"].to_list(),a))
+            else: result_data.append((i["frame"].to_list(),None))
         return result_data
 
     def apply_rules(self,data:pd.DataFrame):
