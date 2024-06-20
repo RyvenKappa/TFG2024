@@ -11,7 +11,8 @@ class Movement_Estimator():
     
     def detect_fish_movements(self):
         """
-        Metodo para realizar el calculo en función de los datos
+        Metodo para realizar el calculo en función de los datos, devuelve una lista con 2 o 1 elemento según el
+        número de peces que hay
         """
         resultado = []
         for side in self.data.columns:
@@ -20,7 +21,9 @@ class Movement_Estimator():
         return resultado
     
     def __diff_calculations(self,series:pd.Series)->pd.DataFrame:
-        
+        """
+            Realiza calculos de movimientos por cada lado del pez
+        """
         side_data = pd.json_normalize(series)
         
         #side_data = side_data.diff()
@@ -98,13 +101,3 @@ class Movement_Estimator():
         if data==None:
             return
         self.data=data
-
-    def get_estimation_list(self)-> list:
-        """
-        Devuelve una lista con los frames en los que ha sucedido un movimiento
-        """
-
-    def get_estimation(self) -> int:
-        """
-        Devuelve un entero con los frames en los que ha sucedido un movimiento
-        """
