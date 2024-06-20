@@ -227,7 +227,9 @@ class Manager():
                         dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {datos +1} de {self.total_frames}")
                 else:
                     print(f"He obtenido unos datos tipo: {type(datos)} y longitud {len(datos)}")
-                    self.raw_data = datos.copy()
+                    print(datos[0])
+                    print(datos[1])
+                    self.raw_data = datos
                     self.set_window("DataWindow")
 
     def set_window(self,window_name:str):

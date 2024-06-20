@@ -5,6 +5,7 @@ from Fish_Estimator import estimate_fish_number
 import ultralytics
 import cv2 as cv
 import pickle
+from Movement_Control import Movement_Estimator
 
 class Data_Processor(Process):
 
@@ -52,7 +53,8 @@ class Data_Processor(Process):
         datos = pd.DataFrame(resultado)
         if self.fish_number == 1:
             datos = datos.drop(columns='right')
-        self.update_enpoint.send(datos)#Enviamos los datos procesados al proceso principal
+        estimador = Movement_Estimator(data=datos.copy())
+        self.update_enpoint.send((estimador.detect_fish_movements(),datos.copy()))#Enviamos los datos procesados al proceso principal
 
 
     def __frame_processing(self,frame_data=None):
