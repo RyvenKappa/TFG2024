@@ -20,9 +20,9 @@ class Movement_Estimator():
             resultado.append(self.__diff_calculations(self.data[side]))
         return resultado
     
-    def __diff_calculations(self,series:pd.Series)->pd.DataFrame:
+    def __diff_calculations(self,series:pd.Series)-> list:
         """
-            Realiza calculos de movimientos por cada lado del pez
+            Realiza calculos de movimientos por cada lado del pez y devuelve 
         """
         side_data = pd.json_normalize(series)
         
