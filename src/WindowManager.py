@@ -17,6 +17,7 @@ class Manager():
     def __init__(self) -> None:
         self.window_tags=[]
         self.infiriendo = False
+        self.raw_data = None
         self.start_screen()
 
     def start_screen(self) -> None:
