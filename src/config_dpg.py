@@ -6,7 +6,7 @@ def set_config():
         dpg.add_font("src/font/Aptos.ttf",50,tag="LargeFont")
         dpg.add_font("src/font/Aptos.ttf",30,tag="MidFont")
         dpg.add_font("src/font/Aptos.ttf",20,tag="NormalFont")
-        dpg.add_font("src/font/Aptos.ttf",17,tag="SmallFont")
+        dpg.add_font("src/font/Aptos.ttf",16,tag="SmallFont")
     #Cargado de imagenes dinámicas
     width, height, channels, data = dpg.load_image("src/images/Gamma.png")
     #width1,height1,channels1,data1 = dpg.load_image("src/images/pescado.gif")
