@@ -140,7 +140,7 @@ class Manager():
                                     with dpg.tab_bar():
                                         with dpg.tab(label="Datos de Area"):
 
-                                            with dpg.plot(label="Cambio en las areas",width=-1,height=-1):
+                                            with dpg.plot(label="Cambio en las areas",width=-1,height=-1,anti_aliased=True):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="area_x")
@@ -153,7 +153,7 @@ class Manager():
                                         
                                         with dpg.tab(label="Datos del centroide"):
 
-                                            with dpg.plot(label="Cambio en los centroides",width=-1,height=-1):
+                                            with dpg.plot(label="Cambio en los centroides",width=-1,height=-1,anti_aliased=True):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="centroide_x")
@@ -166,7 +166,7 @@ class Manager():
                                         
                                         with dpg.tab(label="Cambio de la relación altura ancho"):
 
-                                            with dpg.plot(label="Cambio en la relación ancho-altura",width=-1,height=-1):
+                                            with dpg.plot(label="Cambio en la relación ancho-altura",width=-1,height=-1,anti_aliased=True):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="hw_x")
@@ -179,7 +179,7 @@ class Manager():
                                         
                                         with dpg.tab(label="Cambio del blur pez izquierda"):
 
-                                            with dpg.plot(label="Cambio en el blur",width=-1,height=-1):
+                                            with dpg.plot(label="Cambio en el blur",width=-1,height=-1,anti_aliased=True):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="blur_x")
@@ -197,7 +197,7 @@ class Manager():
                                     dpg.add_table_column()
                                     dpg.add_table_column()
                                     with dpg.table_row():
-                                        with dpg.plot(label="Datos completos pez izquierda",width=-1,height=-1,tag="GraficaFinalIzquierda"):
+                                        with dpg.plot(label="Datos completos pez izquierda",width=-1,height=-1,tag="GraficaFinalIzquierda",anti_aliased=True):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="xCompletaIzquierda")
@@ -211,7 +211,7 @@ class Manager():
                                                 with dpg.plot_axis(dpg.mvYAxis,label="blur_izquierda"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_izquierda",tag="Blur_IzquierdaCompleta")
 
-                                        with dpg.plot(label="Datos completos pez derecha",width=-1,height=-1,tag="GraficaFinalDerecha"):
+                                        with dpg.plot(label="Datos completos pez derecha",width=-1,height=-1,tag="GraficaFinalDerecha",anti_aliased=True):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="xCompletaDerecha")
@@ -230,8 +230,21 @@ class Manager():
                                         dpg.bind_item_font(text,"SmallFont")
                                         text = dpg.add_text("Numero total de movimientos del pez derecho: ",tag="MovimientosDerecha")
                                         dpg.bind_item_font(text,"SmallFont")
-                    with dpg.child_window(no_scrollbar=True,height=-1):
-                        dpg.add_text(default_value=f"Zona en la que iran las cosas del video y de añadir o eliminar movimientos")
+                    with dpg.child_window(no_scrollbar=True,height=-1,border=False):
+                        with dpg.child_window(no_scrollbar=True,height=-300,tag="ImagenWindow"):
+                            dpg.add_text("Zona donde ira la imagen")
+                        with dpg.table(resizable=False,header_row=False,reorderable=True):
+                            dpg.add_table_row()
+                            dpg.add_table_column()
+                            dpg.add_table_column()
+                            with dpg.table_row():
+                                with dpg.group():
+                                    dpg.add_button(label="Seleccionar fichero", callback=lambda:dpg.configure_item("__Explorador2",show=True))
+                                    #TODO definir el explorador correctamente para que tenga sentido y que se eliminen los datos correctamente
+                                    with dpg.file_dialog(label = "Explorador",width=300, height=400, show=True,tag="__Explorador2",callback=lambda s, a, u : print(a.get('current_path'))):
+                                        dpg.add_file_extension("", color=(255,255,255,255))
+                                    dpg.add_input_text(hint="Introduzca el nombre del archivo a guardar",width=-1,height=-1)
+                                dpg.add_button(label="Guardar Resultados",width=-1,height=-1)
 
     def set_user_callback(self,sender,app_data):
         """
@@ -314,6 +327,8 @@ class Manager():
             #Gráficas totales izquierda y derecha
             dpg.set_item_height("GraficaFinalIzquierda",dpg.get_item_rect_size(self.active_window)[1]/3)
             dpg.set_item_height("GraficaFinalDerecha",dpg.get_item_rect_size(self.active_window)[1]/3)
+            #ChildWindow de la imagen
+            dpg.set_item_height("ImagenWindow",dpg.get_item_rect_size(self.active_window)[1]*2.5/3)
 
         if self.infiriendo:
             self.nuevo_frame = False
