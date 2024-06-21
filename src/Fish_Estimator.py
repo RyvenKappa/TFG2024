@@ -34,12 +34,8 @@ def estimate_fish_number(data:pd.DataFrame):
     for s in samples:
         x2.append(abs(s-samples_mean))
     deviation = np.mean(x2)
-    print(deviation)
-    print(samples_mean)
     if deviation>=img_x/6:
         #Hay 2 peces
-        print("Hay 2 truchas")
         return 2,samples_mean
     else:
-        print("Hay 1 trucha")
         return 1,samples_mean
