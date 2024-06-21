@@ -98,7 +98,7 @@ class Data_Processor(Process):
         Metodo privado para calcular la información de la mejor caja del fotograma para cada pez, independiente del numero de peces
         Metodo diseñado para resultados de ultralytics en modo detect
         """
-        if self.fish_number > 1: #TODO hacer el blur por zona de la imagen
+        if self.fish_number > 1:
             #Diferenciamos entre izquierda y derecha
             self.proccesed_result[0] = dict()
             self.proccesed_result[1] = dict()
@@ -155,7 +155,7 @@ class Data_Processor(Process):
         Metodo privado para calcular la información de la mejor caja del fotograma para cada pez, independiente del numero de peces
         Metodo diseñado para resultados de ultralytics en modo Oriented Bounding Boxes
         """
-        if self.fish_number > 1: #TODO hacer el blur por zona de la imagen
+        if self.fish_number > 1:
             #Diferenciamos entre izquierda y derecha
             self.proccesed_result[0] = dict()
             self.proccesed_result[1] = dict()
