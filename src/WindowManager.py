@@ -22,6 +22,8 @@ class Manager():
         self.window_tags=[]
         self.infiriendo = False
         self.raw_data = None
+        self.dataset_global_left = None
+        self.dataset_global_right = None
         self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo
         self.start_screen()
 
@@ -320,22 +322,23 @@ class Manager():
                 else:
                     self.raw_data = datos
                     self.listas_movimientos = datos[0]
+                    #1. Obtenemos todas las series de datos que vamos a usar para asignar a las gráficas a través del dataframe resultante
                     self.dataset_global_left:pd.DataFrame = datos[1]
                     if len(datos) == 3 : self.dataset_global_right:pd.DataFrame = datos[2]
-                    #1. Obtenemos la cantidad de frames del dataframe
+                    #2. Obtenemos la cantidad de frames del dataframe
                     self.total_frames = len(self.dataset_global_left)
-                    #2. Obtenemos la cantidad de movimientos por lado
+                    #3. Obtenemos la cantidad de movimientos por lado
                     if len(datos[0])==1:
                         fish_number = 1
                         contador_none_izquierda = sum(1 for x in datos[0][0] if x[1] is None)
-                        self.right_moves = len(datos[0][0]) - contador_none_izquierda
+                        self.left_moves = len(datos[0][0]) - contador_none_izquierda
                     else:
                         fish_number = 2
                         contador_none_izquierda = sum(1 for x in datos[0][0] if x[1] is None)
                         contador_none_derecha = sum(1 for x in datos[0][1] if x[1] is None)
                         self.left_moves = len(datos[0][0]) - contador_none_izquierda
                         self.right_moves = len(datos[0][1]) - contador_none_derecha
-                    #3. Obtenemos todas las series de datos que vamos a usar para asignar a las gráficas a través del dataframe resultante
+                    
                     pprint.pprint(self.dataset_global_left)
                     pprint.pprint(self.dataset_global_right)
                     #Configurar las gráficas

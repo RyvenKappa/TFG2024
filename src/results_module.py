@@ -60,7 +60,10 @@ class Data_Processor(Process):
         if self.fish_number == 2:
             right = pd.json_normalize(datos['right'])
             right = self.centroid_abs(right)
-        self.update_enpoint.send((estimador.detect_fish_movements(),left,right))#Enviamos los datos procesados al proceso principal
+        if self.fish_number == 1:
+            self.update_enpoint.send((estimador.detect_fish_movements(),left))#Enviamos los datos procesados al proceso principal
+        else:
+            self.update_enpoint.send((estimador.detect_fish_movements(),left,right))#Enviamos los datos procesados al proceso principal
 
 
     def __frame_processing(self,frame_data=None):
