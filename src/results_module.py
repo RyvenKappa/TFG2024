@@ -6,6 +6,7 @@ import ultralytics
 import cv2 as cv
 import pickle
 from Movement_Control import Movement_Estimator
+import numpy as np
 
 class Data_Processor(Process):
 
@@ -53,8 +54,14 @@ class Data_Processor(Process):
         datos = pd.DataFrame(resultado)
         if self.fish_number == 1:
             datos = datos.drop(columns='right')
-        estimador = Movement_Estimator(data=datos.copy())
-        self.update_enpoint.send((estimador.detect_fish_movements(),datos.copy()))#Enviamos los datos procesados al proceso principal
+        estimador = Movement_Estimator(data=datos.copy())#Estimamos los movimientos
+        #Convertimos el dataframe principal en 2 para el proceso principal, 1 por cada lado
+        left = pd.json_normalize(datos['left'])
+        left = self.centroid_abs(left)
+        if self.fish_number == 2:
+            right = pd.json_normalize(datos['right'])
+            right = self.centroid_abs(right)
+        self.update_enpoint.send((estimador.detect_fish_movements(),left,right))#Enviamos los datos procesados al proceso principal
 
 
     def __frame_processing(self,frame_data=None):
@@ -197,3 +204,16 @@ class Data_Processor(Process):
             self.proccesed_result[0]["width_height_relation"] = (boxes.xywhr[left_best][2].item()/boxes.xywhr[left_best][3].item())
             self.proccesed_result[0]["angulo"] = boxes.xywhr[left_best][4].item()
             self.proccesed_result[0]["blur"] = self.__blurness_estimation(orig_img)
+    
+    def centroid_abs(self,side_data:pd.DataFrame)-> pd.DataFrame:
+        """
+        Método para cambiar las columnas centroidex y centroidey por una sola columna que tenga el modulo de cambio diferencial del centroide
+        """
+        side_data['centroideX'] = side_data['centroideX'].copy().diff()
+        side_data['centroideY'] = side_data['centroideY'].copy().diff()
+        side_data["centroide_change"] = np.sqrt(side_data['centroideX']**2 + side_data['centroideY']**2)
+        side_data.insert(1,'centroide_change',side_data.pop('centroide_change'))
+        side_data = side_data.drop(columns="centroideX")
+        side_data = side_data.drop(columns="centroideY")
+        side_data['centroide_change'].fillna(0, inplace=True)
+        return side_data
