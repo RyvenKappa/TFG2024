@@ -50,7 +50,6 @@ class Data_Processor(Process):
                         pass
                 else:
                     break
-        print(f"Frames procesados, con datos:\n{len(resultado['left'])}")
         datos = pd.DataFrame(resultado)
         if self.fish_number == 1:
             datos = datos.drop(columns='right')
