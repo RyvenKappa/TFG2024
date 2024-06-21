@@ -187,7 +187,43 @@ class Manager():
                                                     dpg.add_line_series(self.eje_frame,y=np.ones(190),label="blur_derecha",tag="Blur_Derecha")
                                         
                             with dpg.table_row():
-                                dpg.add_text(default_value=f"Zona de gráfica total")
+                                with dpg.table(tag="GraphTableFinal",resizable=True,header_row=False,reorderable=True):
+                                    dpg.add_table_row()
+                                    dpg.add_table_row()
+                                    dpg.add_table_column()
+                                    dpg.add_table_column()
+                                    with dpg.table_row():
+                                        with dpg.plot(label="Datos completos pez izquierda",width=-1,height=-1,tag="GraficaFinalIzquierda"):
+                                                dpg.add_plot_legend()
+                                                #Las dos comparten eje x
+                                                dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="xCompletaIzquierda")
+                                                
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_izquierda"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="area_izquierda",tag="Area_IzquierdaCompleta")
+
+                                                with dpg.plot_axis(dpg.mvYAxis,label="centroide_izquierda"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="centroide_izquierda",tag="Centroide_IzquierdaCompleta")
+
+                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_izquierda"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_izquierda",tag="Blur_IzquierdaCompleta")
+
+                                        with dpg.plot(label="Datos completos pez derecha",width=-1,height=-1,tag="GraficaFinalDerecha"):
+                                                dpg.add_plot_legend()
+                                                #Las dos comparten eje x
+                                                dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="xCompletaDerecha")
+                                                
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="area_derecha",tag="Area_DerechaCompleta")
+
+                                                with dpg.plot_axis(dpg.mvYAxis,label="centroide_derecha"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="centroide_derecha",tag="Centroide_DerechaCompleta")
+
+                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_derecha"):
+                                                    dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_derecha",tag="Blur_DerechaCompleta")
+
+                                    with dpg.table_row():
+                                        dpg.add_text("Numero total de movimientos del pez izquierdo")
+                                        dpg.add_text("Numero total de movimientos del pez derecho")
                     with dpg.child_window(no_scrollbar=True,height=-1):
                         dpg.add_text(default_value=f"Zona en la que iran las gráficas")
 
@@ -266,6 +302,9 @@ class Manager():
         #Ajustamos el tamaño de algunos elementos para que se ajusten al tamaño de la ventana
         if self.data_mode:
             dpg.set_item_height("ChildWindowGraphs",dpg.get_item_rect_size(self.active_window)[1]/2)
+            dpg.set_item_height("GraficaFinalIzquierda",dpg.get_item_rect_size(self.active_window)[1]/3)
+            dpg.set_item_height("GraficaFinalDerecha",dpg.get_item_rect_size(self.active_window)[1]/3)
+
         if self.infiriendo:
             self.nuevo_frame = False
             while self.frame_enpoint.poll():
