@@ -222,9 +222,9 @@ class Manager():
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_derecha",tag="Blur_DerechaCompleta")
 
                                     with dpg.table_row():
-                                        text = dpg.add_text("Numero total de movimientos del pez izquierdo: ")
+                                        text = dpg.add_text("Numero total de movimientos del pez izquierdo: ",tag="MovimientosIzquierda")
                                         dpg.bind_item_font(text,"SmallFont")
-                                        text = dpg.add_text("Numero total de movimientos del pez derecho: ")
+                                        text = dpg.add_text("Numero total de movimientos del pez derecho: ",tag="MovimientosDerecha")
                                         dpg.bind_item_font(text,"SmallFont")
                     with dpg.child_window(no_scrollbar=True,height=-1):
                         dpg.add_text(default_value=f"Zona en la que iran las gráficas")
@@ -318,11 +318,32 @@ class Manager():
                         dpg.set_value(item="progreso",value=(datos+1)/self.total_frames)
                         dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {datos +1} de {self.total_frames}")
                 else:
-                    print(f"He obtenido unos datos tipo: {type(datos)} y longitud {len(datos)}")
-                    pprint.pprint(datos[0])
-                    print("\n\n")
-                    pprint.pprint(datos[1])
                     self.raw_data = datos
+                    self.listas_movimientos = datos[0]
+                    self.dataset_global_left:pd.DataFrame = datos[1]
+                    if len(datos) == 3 : self.dataset_global_right:pd.DataFrame = datos[2]
+                    #1. Obtenemos la cantidad de frames del dataframe
+                    self.total_frames = len(self.dataset_global_left)
+                    #2. Obtenemos la cantidad de movimientos por lado
+                    if len(datos[0])==1:
+                        fish_number = 1
+                        contador_none_izquierda = sum(1 for x in datos[0][0] if x[1] is None)
+                        self.right_moves = len(datos[0][0]) - contador_none_izquierda
+                    else:
+                        fish_number = 2
+                        contador_none_izquierda = sum(1 for x in datos[0][0] if x[1] is None)
+                        contador_none_derecha = sum(1 for x in datos[0][1] if x[1] is None)
+                        self.left_moves = len(datos[0][0]) - contador_none_izquierda
+                        self.right_moves = len(datos[0][1]) - contador_none_derecha
+                    #3. Obtenemos todas las series de datos que vamos a usar para asignar a las gráficas a través del dataframe resultante
+                    pprint.pprint(self.dataset_global_left)
+                    pprint.pprint(self.dataset_global_right)
+                    #Configurar las gráficas
+                    self.eje_frame = np.linspace(start=0,stop=self.total_frames-1,num=self.total_frames) # Creamos el eje de fotogramas
+
+                    #Configurar textos
+                    dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
+                    if fish_number == 2: dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
                     self.set_window("DataWindow")
 
     def set_window(self,window_name:str):
