@@ -345,12 +345,49 @@ class Manager():
                         self.left_moves = len(datos[0][0]) - contador_none_izquierda
                         self.right_moves = len(datos[0][1]) - contador_none_derecha
                     #Configurar las gráficas
-                    self.eje_frame = np.linspace(start=0,stop=self.total_frames-1,num=self.total_frames) # Creamos el eje de fotogramas
-
+                    print(self.dataset_global_left)
+                    self.set_data_graphs()
                     #Configurar textos
                     dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
                     if fish_number == 2: dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
                     self.set_window("DataWindow")
+
+
+    def set_data_graphs(self):
+        eje_frame = np.linspace(start=0,stop=self.total_frames-1,num=self.total_frames) # Creamos el eje de fotogramas
+        #Configuramos las gráficas de la Izquierda
+        dpg.set_value("Area_Izquierda",[eje_frame, self.dataset_global_left['area'].tolist()])
+        dpg.set_value("Centroide_Izquierda",[eje_frame, self.dataset_global_left['centroide_change'].tolist()])
+        dpg.set_value("Relacion_Izquierda",[eje_frame, self.dataset_global_left['width_height_relation'].tolist()])
+        dpg.set_value("Blur_Izquierda",[eje_frame, self.dataset_global_left['blur'].tolist()])
+        dpg.set_value("Area_IzquierdaCompleta",[eje_frame, self.dataset_global_left['area'].tolist()])
+        dpg.set_value("Centroide_IzquierdaCompleta",[eje_frame, self.dataset_global_left['centroide_change'].tolist()])
+        dpg.set_value("Blur_IzquierdaCompleta",[eje_frame, self.dataset_global_left['blur'].tolist()])
+        #Les pongo limites de zoom-out en x
+        if type(self.dataset_global_right)!= type(None):
+            #Muestro los items
+            dpg.show_item("Area_Derecha")
+            dpg.show_item("Centroide_Derecha")
+            dpg.show_item("Relacion_Derecha")
+            dpg.show_item("Blur_Derecha")
+            dpg.show_item("GraficaFinalDerecha")
+            dpg.show_item("MovimientosDerecha")
+            #Los cargo de datos
+            dpg.set_value("Area_Derecha",[eje_frame, self.dataset_global_right['area'].tolist()])
+            dpg.set_value("Centroide_Derecha",[eje_frame, self.dataset_global_right['centroide_change'].tolist()])
+            dpg.set_value("Relacion_Derecha",[eje_frame, self.dataset_global_right['width_height_relation'].tolist()])
+            dpg.set_value("Blur_Derecha",[eje_frame, self.dataset_global_right['blur'].tolist()])
+            dpg.set_value("Area_DerechaCompleta",[eje_frame, self.dataset_global_right['area'].tolist()])
+            dpg.set_value("Centroide_DerechaCompleta",[eje_frame, self.dataset_global_right['centroide_change'].tolist()])
+            dpg.set_value("Blur_DerechaCompleta",[eje_frame, self.dataset_global_right['blur'].tolist()])
+            #Les pongo limites de zoom-out en x
+        else:
+            dpg.hide_item("Area_Derecha")
+            dpg.hide_item("Centroide_Derecha")
+            dpg.hide_item("Relacion_Derecha")
+            dpg.hide_item("Blur_Derecha")
+            dpg.hide_item("GraficaFinalDerecha")
+            dpg.hide_item("MovimientosDerecha")
 
     def set_window(self,window_name:str):
         """
