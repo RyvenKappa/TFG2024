@@ -15,6 +15,7 @@ def main():
     dpg.set_primary_window("MainWindow",True)
     dpg.show_viewport()
     dpg.setup_dearpygui()
+    manager.set_window("DataWindow")
     while dpg.is_dearpygui_running():
         #Actualizar estado de los hilos y de los datos mostrados en pantalla
         manager.update()

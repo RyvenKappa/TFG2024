@@ -121,7 +121,7 @@ class Manager():
             dpg.bind_item_font(boton_cancelar,"MidFont")
         with dpg.window(tag="DataWindow",no_scrollbar=True,autosize=True,show=False):
             self.window_tags.append("DataWindow")
-            with dpg.table(tag="DataTable",resizable=False,header_row=False,reorderable=True):
+            with dpg.table(tag="DataTable",resizable=True,header_row=False,reorderable=True):
                 dpg.add_table_row()
                 dpg.add_table_column()
                 dpg.add_table_column()
@@ -222,8 +222,10 @@ class Manager():
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_derecha",tag="Blur_DerechaCompleta")
 
                                     with dpg.table_row():
-                                        dpg.add_text("Numero total de movimientos del pez izquierdo")
-                                        dpg.add_text("Numero total de movimientos del pez derecho")
+                                        text = dpg.add_text("Numero total de movimientos del pez izquierdo: ")
+                                        dpg.bind_item_font(text,"SmallFont")
+                                        text = dpg.add_text("Numero total de movimientos del pez derecho: ")
+                                        dpg.bind_item_font(text,"SmallFont")
                     with dpg.child_window(no_scrollbar=True,height=-1):
                         dpg.add_text(default_value=f"Zona en la que iran las gráficas")
 
@@ -302,6 +304,7 @@ class Manager():
         #Ajustamos el tamaño de algunos elementos para que se ajusten al tamaño de la ventana
         if self.data_mode:
             dpg.set_item_height("ChildWindowGraphs",dpg.get_item_rect_size(self.active_window)[1]/2)
+            #Gráficas totales izquierda y derecha
             dpg.set_item_height("GraficaFinalIzquierda",dpg.get_item_rect_size(self.active_window)[1]/3)
             dpg.set_item_height("GraficaFinalDerecha",dpg.get_item_rect_size(self.active_window)[1]/3)
 
