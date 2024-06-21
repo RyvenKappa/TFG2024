@@ -24,7 +24,7 @@ class Manager():
         self.raw_data = None
         self.dataset_global_left = None
         self.dataset_global_right = None
-        self.save_path = None
+        self.save_path = ""
         self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo
         self.start_screen()
 
@@ -243,18 +243,18 @@ class Manager():
                                     dpg.add_button(label="Seleccionar carpeta", callback=lambda:dpg.configure_item("__Explorador2",show=True))
                                     with dpg.file_dialog(
                                         label="Explorador",
-                                        directory_selector=False,
+                                        directory_selector=True,
                                         show=False,
                                         modal=False,
                                         tag="__Explorador2",
-                                        callback=lambda s, a, u : print(a.get('current_path')),
+                                        callback=self.folder_selected_callback,
                                         cancel_callback=self.no_folder_selected_callback,
                                         height=500,
                                         width=500
                                     ):
                                         dpg.add_file_extension("", color=(255,255,255,255))
-                                    dpg.add_input_text(hint="Introduzca el nombre del archivo a guardar",width=-1,height=-1)
-                                dpg.add_button(label="Guardar Resultados",width=-1,height=-1)
+                                    dpg.add_input_text(hint="Introduzca el nombre del archivo a guardar",width=-1,height=-1,tag="SaveFileNameInput")
+                                dpg.add_button(label="Guardar Resultados",width=-1,height=-1,callback=self.save_results_callback)
 
     def set_user_callback(self,sender,app_data):
         """
@@ -278,6 +278,12 @@ class Manager():
         dpg.configure_item("inputText1",default_value="")
         dpg.configure_item("BotonInferir",show=False)
     
+    def folder_selected_callback(self,sender,app_data):
+        """
+            Método que con una carpeta seleccionada, la añade como fichero base
+        """
+        self.save_path = app_data.get('current_path')+"\\"
+
     def no_folder_selected_callback(self,sender,app_data):
         """
             Callback si se cancela la selección de carpeta, por defecto guardamos en la raiz donde esta el exe
@@ -326,6 +332,14 @@ class Manager():
     def volver_callback(self,sender,app_data):
         self.set_window("MainWindow")
 
+
+    def save_results_callback(self,sender,app_data):
+        """
+            Método que guarda los resultados de la inferencia en un formato común, de manera que se pueda utilizar más tarde
+        """
+        #TODO
+        print(self.save_path+dpg.get_value("SaveFileNameInput"))
+        pass
         
     
 
