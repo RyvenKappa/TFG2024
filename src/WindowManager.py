@@ -129,6 +129,8 @@ class Manager():
                 dpg.add_table_column()
                 with dpg.table_row():
                     with dpg.child_window(no_scrollbar=True,height=-1,border=False):
+                        boton_cancelar = dpg.add_button(width=-1,height=30,label="Volver a la pantalla inicial",show=True,tag="BotonVolverAtras",callback=self.volver_callback)
+                        #dpg.bind_item_font(boton_cancelar,"MidFont")
                         with dpg.table(tag="GraphTable",resizable=True,header_row=False,reorderable=True):
                             dpg.add_table_row()
                             dpg.add_table_row()
@@ -229,7 +231,7 @@ class Manager():
                                         text = dpg.add_text("Numero total de movimientos del pez derecho: ",tag="MovimientosDerecha")
                                         dpg.bind_item_font(text,"SmallFont")
                     with dpg.child_window(no_scrollbar=True,height=-1):
-                        dpg.add_text(default_value=f"Zona en la que iran las gráficas")
+                        dpg.add_text(default_value=f"Zona en la que iran las cosas del video y de añadir o eliminar movimientos")
 
     def set_user_callback(self,sender,app_data):
         """
@@ -291,6 +293,9 @@ class Manager():
             self.model.stop_video_inference()
             self.set_window("MainWindow")
             self.infiriendo = False
+
+    def volver_callback(self,sender,app_data):
+        self.set_window("MainWindow")
 
         
     

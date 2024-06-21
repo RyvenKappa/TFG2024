@@ -217,5 +217,5 @@ class Data_Processor(Process):
         side_data.insert(1,'centroide_change',side_data.pop('centroide_change'))
         side_data = side_data.drop(columns="centroideX")
         side_data = side_data.drop(columns="centroideY")
-        side_data['centroide_change'].fillna(0, inplace=True)
+        side_data['centroide_change'] = side_data['centroide_change'].fillna(0)
         return side_data
