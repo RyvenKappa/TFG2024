@@ -320,6 +320,12 @@ class Manager():
                         dpg.set_value(item="progreso",value=(datos+1)/self.total_frames)
                         dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {datos +1} de {self.total_frames}")
                 else:
+                    #Limpiamos variables anteriores
+                    self.left_moves = 0
+                    self.right_moves = 0
+                    self.dataset_global_left = None
+                    self.dataset_global_right = None
+                    #Empezamos a trabajar con los nuevos datos
                     self.raw_data = datos
                     self.listas_movimientos = datos[0]
                     #1. Obtenemos todas las series de datos que vamos a usar para asignar a las gráficas a través del dataframe resultante
@@ -338,9 +344,6 @@ class Manager():
                         contador_none_derecha = sum(1 for x in datos[0][1] if x[1] is None)
                         self.left_moves = len(datos[0][0]) - contador_none_izquierda
                         self.right_moves = len(datos[0][1]) - contador_none_derecha
-                    
-                    pprint.pprint(self.dataset_global_left)
-                    pprint.pprint(self.dataset_global_right)
                     #Configurar las gráficas
                     self.eje_frame = np.linspace(start=0,stop=self.total_frames-1,num=self.total_frames) # Creamos el eje de fotogramas
 
