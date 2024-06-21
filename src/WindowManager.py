@@ -107,9 +107,9 @@ class Manager():
                                     dpg.add_table_column()
                                     dpg.add_table_column()
                                     with dpg.table_row():
-                                        dpg.add_spacer()
-                                        dpg.add_loading_indicator(radius=7)
-                                        dpg.add_spacer()
+                                        dpg.add_spacer(tag="LeftSpacerInfiriendo")
+                                        dpg.add_loading_indicator(radius=7,tag="LoadingIcon")
+                                        dpg.add_spacer(tag="RightSpacerInfiriendo")
                                 dpg.add_spacer()
                     with dpg.table_row():
                         dpg.add_spacer()
@@ -232,8 +232,35 @@ class Manager():
                                         text = dpg.add_text("Numero total de movimientos del pez derecho: ",tag="MovimientosDerecha")
                                         dpg.bind_item_font(text,"SmallFont")
                     with dpg.child_window(no_scrollbar=True,height=-1,border=False):
-                        with dpg.child_window(no_scrollbar=True,height=-300,tag="ImagenWindow"):
-                            dpg.add_text("Zona donde ira la imagen")
+                        with dpg.child_window(no_scrollbar=True,height=-300,tag="EditarWindow"):
+                            with dpg.child_window(no_scrollbar=True,width=-1,height=100,tag="VideoWindow"):
+                                dpg.add_text("Hay que conseguir meter aquí la imagen redimensionada respecto a la ventana")
+                            with dpg.child_window(no_scrollbar=True,width=-1,height=-1,tag="TimelineControlWindow",border=False):
+                                with dpg.table(resizable=False,header_row=False,reorderable=True,tag="TablaControl"):
+                                    dpg.add_table_row(tag="PlayButtonRow")
+                                    dpg.add_table_row(tag="TimelineRow")
+                                    dpg.add_table_row(tag="BotonesAddDeleteRow")
+                                    dpg.add_table_column()
+                                    with dpg.table_row():
+                                        with dpg.table(resizable=False,header_row=False,reorderable=True):
+                                            dpg.add_table_row()
+                                            dpg.add_table_column()
+                                            dpg.add_table_column()
+                                            dpg.add_table_column()
+                                            with dpg.table_row():
+                                                dpg.add_spacer(width=50,tag="LeftSpacerPlay")
+                                                dpg.add_button(label="PLAY",width=-1)
+                                                dpg.add_spacer(width=50,tag="RightSpacerPlay")
+                                    with dpg.table_row():
+                                        dpg.add_button(width=-1,label="TimeLine y cositas")
+                                    with dpg.table_row():
+                                        with dpg.table(resizable=False,header_row=False,reorderable=True):
+                                            dpg.add_table_row()
+                                            dpg.add_table_column()
+                                            dpg.add_table_column()
+                                            with dpg.table_row():
+                                                dpg.add_button(width=-1,label="AÑADIR")
+                                                dpg.add_button(width=-1,label="ELIMINAR")
                         with dpg.table(resizable=False,header_row=False,reorderable=True):
                             dpg.add_table_row()
                             dpg.add_table_column()
@@ -337,7 +364,7 @@ class Manager():
         """
             Método que guarda los resultados de la inferencia en un formato común, de manera que se pueda utilizar más tarde
         """
-        #TODO
+        #TODO hacer que guarde un fichero de verdad, teniendo en cuenta algún problema y haciendo un pop up indicandolo, pero no solucionandolo
         print(self.save_path+dpg.get_value("SaveFileNameInput"))
         pass
         
@@ -357,10 +384,18 @@ class Manager():
             #Gráficas totales izquierda y derecha
             dpg.set_item_height("GraficaFinalIzquierda",dpg.get_item_rect_size(self.active_window)[1]/3)
             dpg.set_item_height("GraficaFinalDerecha",dpg.get_item_rect_size(self.active_window)[1]/3)
-            #ChildWindow de la imagen
-            dpg.set_item_height("ImagenWindow",dpg.get_item_rect_size(self.active_window)[1]*2.5/3)
+            #ChildWindow para editar
+            dpg.set_item_height("EditarWindow",dpg.get_item_rect_size(self.active_window)[1]*2.5/3)
+            #ChildWindow en el que va la imgen pura
+            dpg.set_item_height("VideoWindow",dpg.get_item_rect_size("EditarWindow")[1]*3/4)
+            #Botón play
+            dpg.set_item_width("LeftSpacerPlay",dpg.get_item_rect_size("EditarWindow")[0]/4)
+            dpg.set_item_width("RightSpacerPlay",dpg.get_item_rect_size("EditarWindow")[0]/4)
 
         if self.infiriendo:
+            #Ajustamos el icono de cargado para que este centrado
+            dpg.set_item_width("LeftSpacerInfiriendo",(dpg.get_item_rect_size(self.active_window)[0]-dpg.get_item_rect_size("LoadingIcon")[0]-3)/2)
+
             self.nuevo_frame = False
             while self.frame_enpoint.poll():
                 datos:pd.DataFrame = self.frame_enpoint.recv()
