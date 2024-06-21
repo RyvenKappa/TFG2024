@@ -350,7 +350,6 @@ class Manager():
                         self.left_moves = len(datos[0][0]) - contador_none_izquierda
                         self.right_moves = len(datos[0][1]) - contador_none_derecha
                     #Configurar las gráficas
-                    print(self.dataset_global_left)
                     self.set_data_graphs()
                     #Configurar textos
                     dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
@@ -368,7 +367,7 @@ class Manager():
         dpg.set_value("Area_IzquierdaCompleta",[eje_frame, self.dataset_global_left['area'].tolist()])
         dpg.set_value("Centroide_IzquierdaCompleta",[eje_frame, self.dataset_global_left['centroide_change'].tolist()])
         dpg.set_value("Blur_IzquierdaCompleta",[eje_frame, self.dataset_global_left['blur'].tolist()])
-        #Les pongo limites de zoom-out en x
+
         if type(self.dataset_global_right)!= type(None):
             #Muestro los items
             dpg.show_item("Area_Derecha")
@@ -393,6 +392,13 @@ class Manager():
             dpg.hide_item("Blur_Derecha")
             dpg.hide_item("GraficaFinalDerecha")
             dpg.hide_item("MovimientosDerecha")
+        #Les pongo limites de zoom-out en x
+        dpg.set_axis_limits("area_x",0,self.total_frames)
+        dpg.set_axis_limits("centroide_x",0,self.total_frames)
+        dpg.set_axis_limits("hw_x",0,self.total_frames)
+        dpg.set_axis_limits("blur_x",0,self.total_frames)
+        dpg.set_axis_limits("xCompletaIzquierda",0,self.total_frames)
+        dpg.set_axis_limits("xCompletaDerecha",0,self.total_frames)
 
     def set_window(self,window_name:str):
         """
