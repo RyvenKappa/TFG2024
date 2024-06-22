@@ -11,6 +11,7 @@ import cv2 as cv
 import pandas as pd
 import numpy as np
 import pprint
+import csv
 
 class Manager():
     """
@@ -33,6 +34,9 @@ class Manager():
         self.clicked_left = None
         self.clicked_right = None
         self.new_click = False
+        self.video_name = None
+        self.left_frames = []
+        self.right_frames = []
         self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo    
         #Clicked handlers
         with dpg.item_handler_registry(tag="Handlers") as handlers:
@@ -367,7 +371,7 @@ class Manager():
         """
             Callback para el botón de inferencia, verifica el video, inicia los procesos, inicia la inferencia y cambia de pantalla
         """
-        video_path = dpg.get_value('inputText1')
+        video_path:str = dpg.get_value('inputText1')
         cap = cv.VideoCapture(video_path)
         self.total_frames = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
         cap.release()
@@ -384,6 +388,7 @@ class Manager():
         dpg.set_value(item="TextProgreso",value=f"Vamos por el frame 0 de {self.total_frames}")
         dpg.set_value(item="progreso",value=0.0)
 
+        self.video_name = video_path[video_path.rfind("\\")+1:]
 
         #Cambio de pantalla
         self.set_window("LoadingWindow")
@@ -410,23 +415,35 @@ class Manager():
         """
             Método que guarda los resultados de la inferencia en un formato común, de manera que se pueda utilizar más tarde
         """
-        #TODO hacer que guarde un fichero de verdad, teniendo en cuenta algún problema y haciendo un pop up indicandolo, pero no solucionandolo
-        print(self.save_path+dpg.get_value("SaveFileNameInput"))
-        pass
+        path = self.save_path+self.video_name + ".csv"
+        try:
+            archivo_csv = open(path, mode='w', newline='')
+            writer = csv.writer(archivo_csv, delimiter=',')
+            writer.writerow([self.video_name])
+            writer.writerow([len(self.left_frames)])
+            writer.writerow(self.left_frames)
+            if type(self.dataset_global_right)!= type(None):
+                writer.writerow([len(self.right_frames)])
+                writer.writerow(self.right_frames)
+            archivo_csv.close()
+        except Exception as e:
+            print(e)
     
     def clicked_callback(self,sender,app_data):
         """
             Método para registrar el frame seleccionado
         """
+        self.clicked_left = None
+        self.clicked_right = None
         item_clickeado = dpg.get_item_alias(app_data[1])
         if item_clickeado == "TimeLinePlot":
             self.clicked_left = round(dpg.get_plot_mouse_pos()[0])
             self.new_click = True
-            print(f"{self.frame} clicked")
+            print(f"{self.clicked_left} clicked")
         elif item_clickeado == "TimeLinePlot2":
             self.clicked_right = round(dpg.get_plot_mouse_pos()[0])
             self.new_click = True
-            print(f"{self.frame} clicked")
+            print(f"{self.clicked_right} clicked")
 
 
 
@@ -570,6 +587,8 @@ class Manager():
         """
             Crea las series
         """
+        self.left_frames = []
+        self.right_frames = []
         self.prob_mov_left = np.zeros(self.total_frames)
         self.prob_mov_right = np.zeros(self.total_frames)
         self.real_mov_left = np.zeros(self.total_frames)
@@ -579,6 +598,7 @@ class Manager():
                 for frame in i[0]:
                     self.prob_mov_left[frame] = 1
             else:
+                self.left_frames.append(i[1])
                 for frame in i[0]:
                     self.real_mov_left[frame] = 1
         if len(self.listas_movimientos) == 2:
@@ -587,6 +607,7 @@ class Manager():
                     for frame in i[0]:
                         self.prob_mov_right[frame] = 1
                 else:
+                    self.right_frames.append(i[1])
                     for frame in i[0]:
                         self.real_mov_right[frame] = 1
                 
