@@ -18,3 +18,10 @@ def set_config():
     with dpg.value_registry():
         dpg.add_string_value(default_value="",tag="config_user")
 
+    #Configuración de temas para las gráficas
+    with dpg.theme(tag="timeline_red_theme"):
+        with dpg.theme_component(0):
+            dpg.add_theme_color(dpg.mvPlotCol_Fill,(255,0,0,64), category=dpg.mvThemeCat_Plots)
+    with dpg.theme(tag="timeline_green_theme"):
+        with dpg.theme_component(0):
+            dpg.add_theme_color(dpg.mvPlotCol_Fill,(0,255,0,64), category=dpg.mvThemeCat_Plots)
