@@ -330,7 +330,6 @@ class Manager():
                                         width=500
                                     ):
                                         dpg.add_file_extension("", color=(255,255,255,255))
-                                    dpg.add_input_text(hint="Introduzca el nombre del archivo a guardar",width=-1,height=-1,tag="SaveFileNameInput")
                                 dpg.add_button(label="Guardar Resultados",width=-1,height=-1,callback=self.save_results_callback)
 
     def set_user_callback(self,sender,app_data):
