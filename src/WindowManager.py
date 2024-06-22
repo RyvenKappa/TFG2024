@@ -30,7 +30,13 @@ class Manager():
         self.prob_mov_right = []
         self.real_mov_left = []
         self.real_mov_right = []
-        self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo
+        self.clicked_left = None
+        self.clicked_right = None
+        self.new_click = False
+        self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo    
+        #Clicked handlers
+        with dpg.item_handler_registry(tag="Handlers") as handlers:
+            dpg.add_item_clicked_handler(callback=self.clicked_callback)
         self.start_screen()
 
     def start_screen(self) -> None:
@@ -272,6 +278,7 @@ class Manager():
                                                         dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasSinFrame",parent="y_axis")  # Rojo
                                                         dpg.bind_item_theme(dpg.last_item(),"timeline_green_theme")
                                                         dpg.set_axis_limits("y_axis",0,1)
+                                                dpg.bind_item_handler_registry("TimeLinePlot","Handlers")
 
                                                 with dpg.plot(width=-1, height=-1,tag="TimeLinePlot2"):
 
@@ -286,14 +293,20 @@ class Manager():
                                                         dpg.bind_item_theme(dpg.last_item(),"timeline_green_theme")
                                                         dpg.set_axis_limits("y_axis2",0,1)
 
+                                                dpg.bind_item_handler_registry("TimeLinePlot2","Handlers")
+
                                     with dpg.table_row():
                                         with dpg.table(resizable=False,header_row=False,reorderable=True):
                                             dpg.add_table_row()
                                             dpg.add_table_column()
                                             dpg.add_table_column()
+                                            dpg.add_table_column()
+                                            dpg.add_table_column()
                                             with dpg.table_row():
-                                                dpg.add_button(width=-1,label="AÑADIR")
-                                                dpg.add_button(width=-1,label="ELIMINAR")
+                                                dpg.add_button(width=-1,label="Añadir a la Izquierda")
+                                                dpg.add_button(width=-1,label="Eliminar en la Izquierda")
+                                                dpg.add_button(width=-1,label="Añadir a la Derecha")
+                                                dpg.add_button(width=-1,label="Eliminar en la Derecha")
                         with dpg.table(resizable=False,header_row=False,reorderable=True):
                             dpg.add_table_row()
                             dpg.add_table_column()
@@ -400,9 +413,20 @@ class Manager():
         #TODO hacer que guarde un fichero de verdad, teniendo en cuenta algún problema y haciendo un pop up indicandolo, pero no solucionandolo
         print(self.save_path+dpg.get_value("SaveFileNameInput"))
         pass
-        
     
-
+    def clicked_callback(self,sender,app_data):
+        """
+            Método para registrar el frame seleccionado
+        """
+        item_clickeado = dpg.get_item_alias(app_data[1])
+        if item_clickeado == "TimeLinePlot":
+            self.clicked_left = round(dpg.get_plot_mouse_pos()[0])
+            self.new_click = True
+            print(f"{self.frame} clicked")
+        elif item_clickeado == "TimeLinePlot2":
+            self.clicked_right = round(dpg.get_plot_mouse_pos()[0])
+            self.new_click = True
+            print(f"{self.frame} clicked")
 
 
 
