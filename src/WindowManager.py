@@ -25,6 +25,11 @@ class Manager():
         self.dataset_global_left = None
         self.dataset_global_right = None
         self.save_path = ""
+        self.total_frames = 0
+        self.prob_mov_left = []
+        self.prob_mov_right = []
+        self.real_mov_left = []
+        self.real_mov_right = []
         self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo
         self.start_screen()
 
@@ -141,54 +146,54 @@ class Manager():
                                     with dpg.tab_bar():
                                         with dpg.tab(label="Datos de Area"):
 
-                                            with dpg.plot(label="Cambio en las areas",width=-1,height=-1,anti_aliased=True):
+                                            with dpg.plot(label="Cambio en las areas",width=-1,height=-1,anti_aliased=True,tag="AreasPlot"):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="area_x")
                                                 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="area_izquierda"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_izquierda",tag="AreaYIzquierda"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="area_izquierda",tag="Area_Izquierda")
 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha",tag="AreaYDerecha"):
                                                     dpg.add_line_series(self.eje_frame,y=np.ones(190),label="area_derecha",tag="Area_Derecha")
                                         
                                         with dpg.tab(label="Datos del centroide"):
 
-                                            with dpg.plot(label="Cambio en los centroides",width=-1,height=-1,anti_aliased=True):
+                                            with dpg.plot(label="Cambio en los centroides",width=-1,height=-1,anti_aliased=True,tag="CentroidesPlot"):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="centroide_x")
                                                 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="centroide_izquierda"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="centroide_izquierda",tag="CentroideYIzquierda"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="centroide_izquierda",tag="Centroide_Izquierda")
 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha",tag="CentroideYDerecha"):
                                                     dpg.add_line_series(self.eje_frame,y=np.ones(190),label="centroide_derecha",tag="Centroide_Derecha")
                                         
                                         with dpg.tab(label="Cambio de la relación altura ancho"):
 
-                                            with dpg.plot(label="Cambio en la relación ancho-altura",width=-1,height=-1,anti_aliased=True):
+                                            with dpg.plot(label="Cambio en la relación ancho-altura",width=-1,height=-1,anti_aliased=True,tag="RelacionPlot"):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="hw_x")
                                                 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="relación_izquierda"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="relación_izquierda",tag="RelacionYI"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="relación_izquierda",tag="Relacion_Izquierda")
 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha",tag="RelacionYD"):
                                                     dpg.add_line_series(self.eje_frame,y=np.ones(190),label="relación_derecha",tag="Relacion_Derecha")
                                         
                                         with dpg.tab(label="Cambio del blur pez izquierda"):
 
-                                            with dpg.plot(label="Cambio en el blur",width=-1,height=-1,anti_aliased=True):
+                                            with dpg.plot(label="Cambio en el blur",width=-1,height=-1,anti_aliased=True,tag="BlurPlot"):
                                                 dpg.add_plot_legend()
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="blur_x")
                                                 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_izquierda"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_izquierda",tag="BlurYI"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_izquierda",tag="Blur_Izquierda")
 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_derecha"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_derecha",tag="BlurYD"):
                                                     dpg.add_line_series(self.eje_frame,y=np.ones(190),label="blur_derecha",tag="Blur_Derecha")
                                         
                             with dpg.table_row():
@@ -203,13 +208,13 @@ class Manager():
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="xCompletaIzquierda")
                                                 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="area_izquierda"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_izquierda",tag="YAreaI"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="area_izquierda",tag="Area_IzquierdaCompleta")
 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="centroide_izquierda"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="centroide_izquierda",tag="YCentroideI"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="centroide_izquierda",tag="Centroide_IzquierdaCompleta")
 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_izquierda"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_izquierda",tag="YBlurI"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_izquierda",tag="Blur_IzquierdaCompleta")
 
                                         with dpg.plot(label="Datos completos pez derecha",width=-1,height=-1,tag="GraficaFinalDerecha",anti_aliased=True):
@@ -217,13 +222,13 @@ class Manager():
                                                 #Las dos comparten eje x
                                                 dpg.add_plot_axis(dpg.mvXAxis,label="Frame",tag="xCompletaDerecha")
                                                 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="area_derecha",tag="YAreaD"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="area_derecha",tag="Area_DerechaCompleta")
 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="centroide_derecha"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="centroide_derecha",tag="YCentroideD"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="centroide_derecha",tag="Centroide_DerechaCompleta")
 
-                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_derecha"):
+                                                with dpg.plot_axis(dpg.mvYAxis,label="blur_derecha",tag="YBlurD"):
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_derecha",tag="Blur_DerechaCompleta")
 
                                     with dpg.table_row():
@@ -235,7 +240,7 @@ class Manager():
                         with dpg.child_window(no_scrollbar=True,height=-300,tag="EditarWindow"):
                             with dpg.child_window(no_scrollbar=True,width=-1,height=100,tag="VideoWindow"):
                                 dpg.add_text("Hay que conseguir meter aquí la imagen redimensionada respecto a la ventana")
-                            with dpg.child_window(no_scrollbar=True,width=-1,height=-1,tag="TimelineControlWindow",border=False):
+                            with dpg.group():
                                 with dpg.table(resizable=False,header_row=False,reorderable=True,tag="TablaControl"):
                                     dpg.add_table_row(tag="PlayButtonRow")
                                     dpg.add_table_row(tag="TimelineRow")
@@ -243,7 +248,6 @@ class Manager():
                                     dpg.add_table_column()
                                     with dpg.table_row():
                                         with dpg.table(resizable=False,header_row=False,reorderable=True):
-                                            dpg.add_table_row()
                                             dpg.add_table_column()
                                             dpg.add_table_column()
                                             dpg.add_table_column()
@@ -252,7 +256,36 @@ class Manager():
                                                 dpg.add_button(label="PLAY",width=-1)
                                                 dpg.add_spacer(width=50,tag="RightSpacerPlay")
                                     with dpg.table_row():
-                                        dpg.add_button(width=-1,label="TimeLine y cositas")
+                                        with dpg.table(resizable=True,header_row=False,reorderable=True):
+                                            dpg.add_table_column()
+                                            dpg.add_table_column()
+                                            with dpg.table_row():
+                                                with dpg.plot(width=-1, height=-1,tag="TimeLinePlot"):
+
+                                                    # Añadir ejes
+                                                    x_axis = dpg.add_plot_axis(dpg.mvXAxis,tag="TimeLineXIzquierda")
+                                                    with dpg.plot_axis(dpg.mvYAxis,no_tick_labels=True,no_gridlines=True,no_tick_marks=True,tag="y_axis"):
+                                                        # Añadir la serie de sombreado
+                                                        dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasConFrame",parent="y_axis")  # Rojo
+                                                        dpg.bind_item_theme(dpg.last_item(),"timeline_red_theme")
+                                                        dpg.set_axis_limits("y_axis",0,1)
+                                                        dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasSinFrame",parent="y_axis")  # Rojo
+                                                        dpg.bind_item_theme(dpg.last_item(),"timeline_green_theme")
+                                                        dpg.set_axis_limits("y_axis",0,1)
+
+                                                with dpg.plot(width=-1, height=-1,tag="TimeLinePlot2"):
+
+                                                    # Añadir ejes
+                                                    x_axis = dpg.add_plot_axis(dpg.mvXAxis,tag="TimeLineXDerecha")
+                                                    with dpg.plot_axis(dpg.mvYAxis,no_tick_labels=True,no_gridlines=True,no_tick_marks=True,tag="y_axis2"):
+                                                        # Añadir la serie de sombreado
+                                                        dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasConFrame2",parent="y_axis2")  # Rojo
+                                                        dpg.bind_item_theme(dpg.last_item(),"timeline_red_theme")
+                                                        dpg.set_axis_limits("y_axis2",0,1)
+                                                        dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasSinFrame2",parent="y_axis2")  # Rojo
+                                                        dpg.bind_item_theme(dpg.last_item(),"timeline_green_theme")
+                                                        dpg.set_axis_limits("y_axis2",0,1)
+
                                     with dpg.table_row():
                                         with dpg.table(resizable=False,header_row=False,reorderable=True):
                                             dpg.add_table_row()
@@ -385,12 +418,15 @@ class Manager():
             dpg.set_item_height("GraficaFinalIzquierda",dpg.get_item_rect_size(self.active_window)[1]/3)
             dpg.set_item_height("GraficaFinalDerecha",dpg.get_item_rect_size(self.active_window)[1]/3)
             #ChildWindow para editar
-            dpg.set_item_height("EditarWindow",dpg.get_item_rect_size(self.active_window)[1]*2.5/3)
+            dpg.set_item_height("EditarWindow",dpg.get_item_rect_size(self.active_window)[1]*3.5/4)
             #ChildWindow en el que va la imgen pura
             dpg.set_item_height("VideoWindow",dpg.get_item_rect_size("EditarWindow")[1]*3/4)
             #Botón play
             dpg.set_item_width("LeftSpacerPlay",dpg.get_item_rect_size("EditarWindow")[0]/4)
             dpg.set_item_width("RightSpacerPlay",dpg.get_item_rect_size("EditarWindow")[0]/4)
+            #TimeLine
+            dpg.set_item_height("TimeLinePlot",dpg.get_item_rect_size("EditarWindow")[1]/7.5)
+            dpg.set_item_height("TimeLinePlot2",dpg.get_item_rect_size("EditarWindow")[1]/7.5)
 
         if self.infiriendo:
             #Ajustamos el icono de cargado para que este centrado
@@ -430,6 +466,7 @@ class Manager():
                         self.left_moves = len(datos[0][0]) - contador_none_izquierda
                         self.right_moves = len(datos[0][1]) - contador_none_derecha
                     #Configurar las gráficas
+                    self.sub_arrays_processing()
                     self.set_data_graphs()
                     #Configurar textos
                     dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
@@ -447,6 +484,12 @@ class Manager():
         dpg.set_value("Area_IzquierdaCompleta",[eje_frame, self.dataset_global_left['area'].tolist()])
         dpg.set_value("Centroide_IzquierdaCompleta",[eje_frame, self.dataset_global_left['centroide_change'].tolist()])
         dpg.set_value("Blur_IzquierdaCompleta",[eje_frame, self.dataset_global_left['blur'].tolist()])
+        #Valores de la timeline
+        print(f"{len(eje_frame)} y un una señal de {len(self.real_mov_left)}")
+        dpg.set_value("ZonasConFrame",[eje_frame,self.real_mov_left,np.zeros(self.real_mov_left.shape)])
+        dpg.set_value("ZonasSinFrame",[eje_frame,self.prob_mov_left,np.zeros(self.prob_mov_left.shape)])
+        dpg.set_value("ZonasConFrame2",[eje_frame,self.real_mov_right,np.zeros(self.real_mov_right.shape)])
+        dpg.set_value("ZonasSinFrame2",[eje_frame,self.prob_mov_right,np.zeros(self.prob_mov_right.shape)])
 
         if type(self.dataset_global_right)!= type(None):
             #Muestro los items
@@ -456,6 +499,7 @@ class Manager():
             dpg.show_item("Blur_Derecha")
             dpg.show_item("GraficaFinalDerecha")
             dpg.show_item("MovimientosDerecha")
+            dpg.show_item("TimeLinePlot2")
             #Los cargo de datos
             dpg.set_value("Area_Derecha",[eje_frame, self.dataset_global_right['area'].tolist()])
             dpg.set_value("Centroide_Derecha",[eje_frame, self.dataset_global_right['centroide_change'].tolist()])
@@ -464,7 +508,6 @@ class Manager():
             dpg.set_value("Area_DerechaCompleta",[eje_frame, self.dataset_global_right['area'].tolist()])
             dpg.set_value("Centroide_DerechaCompleta",[eje_frame, self.dataset_global_right['centroide_change'].tolist()])
             dpg.set_value("Blur_DerechaCompleta",[eje_frame, self.dataset_global_right['blur'].tolist()])
-            #Les pongo limites de zoom-out en x
         else:
             dpg.hide_item("Area_Derecha")
             dpg.hide_item("Centroide_Derecha")
@@ -472,6 +515,7 @@ class Manager():
             dpg.hide_item("Blur_Derecha")
             dpg.hide_item("GraficaFinalDerecha")
             dpg.hide_item("MovimientosDerecha")
+            dpg.hide_item("TimeLinePlot2")
         #Les pongo limites de zoom-out en x
         dpg.set_axis_limits("area_x",0,self.total_frames)
         dpg.set_axis_limits("centroide_x",0,self.total_frames)
@@ -479,6 +523,52 @@ class Manager():
         dpg.set_axis_limits("blur_x",0,self.total_frames)
         dpg.set_axis_limits("xCompletaIzquierda",0,self.total_frames)
         dpg.set_axis_limits("xCompletaDerecha",0,self.total_frames)
+        dpg.set_axis_limits("TimeLineXDerecha",0,self.total_frames)
+        dpg.set_axis_limits("TimeLineXIzquierda",0,self.total_frames)
+        #AutoFit sobre los axis mvYAxis que utilizamos
+        dpg.fit_axis_data("AreaYIzquierda")
+        dpg.fit_axis_data("AreaYDerecha")
+        dpg.fit_axis_data("CentroideYIzquierda")
+        dpg.fit_axis_data("CentroideYDerecha")
+        dpg.fit_axis_data("RelacionYI")
+        dpg.fit_axis_data("RelacionYD")
+        dpg.fit_axis_data("BlurYI")
+        dpg.fit_axis_data("BlurYD")
+        dpg.fit_axis_data("YAreaI")
+        dpg.fit_axis_data("YCentroideI")
+        dpg.fit_axis_data("YBlurI")
+        dpg.fit_axis_data("YAreaD")
+        dpg.fit_axis_data("YCentroideD")
+        dpg.fit_axis_data("YBlurD")
+
+
+    def sub_arrays_processing(self):
+        """
+            Crea las series
+        """
+        self.prob_mov_left = np.zeros(self.total_frames)
+        self.prob_mov_right = np.zeros(self.total_frames)
+        self.real_mov_left = np.zeros(self.total_frames)
+        self.real_mov_right = np.zeros(self.total_frames)
+        for i in self.listas_movimientos[0]:
+            if i[1]==None:
+                for frame in i[0]:
+                    self.prob_mov_left[frame] = 1
+            else:
+                for frame in i[0]:
+                    self.real_mov_left[frame] = 1
+        if len(self.listas_movimientos) == 2:
+            for i in self.listas_movimientos[1]:
+                if i[1]==None:
+                    for frame in i[0]:
+                        self.prob_mov_right[frame] = 1
+                else:
+                    for frame in i[0]:
+                        self.real_mov_right[frame] = 1
+                
+            
+
+
 
     def set_window(self,window_name:str):
         """
