@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 import pprint
 import csv
+from video_controller import Controller
 
 class Manager():
     """
@@ -27,6 +28,8 @@ class Manager():
         self.dataset_global_right = None
         self.save_path = ""
         self.total_frames = 0
+        self.first_image = None
+        self.actual_image = None
         self.prob_mov_left = []
         self.prob_mov_right = []
         self.real_mov_left = []
@@ -37,6 +40,7 @@ class Manager():
         self.video_name = None
         self.left_frames = []
         self.right_frames = []
+        self.video_controller = None
         self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo    
         #Clicked handlers
         with dpg.item_handler_registry(tag="Handlers") as handlers:
@@ -249,7 +253,7 @@ class Manager():
                     with dpg.child_window(no_scrollbar=True,height=-1,border=False):
                         with dpg.child_window(no_scrollbar=True,height=-300,tag="EditarWindow"):
                             with dpg.child_window(no_scrollbar=True,width=-1,height=100,tag="VideoWindow"):
-                                dpg.add_text("Hay que conseguir meter aquí la imagen redimensionada respecto a la ventana")
+                                dpg.add_image("VideoTexture",tag="Imagen")
                             with dpg.group():
                                 with dpg.table(resizable=False,header_row=False,reorderable=True,tag="TablaControl"):
                                     dpg.add_table_row(tag="PlayButtonRow")
@@ -263,7 +267,7 @@ class Manager():
                                             dpg.add_table_column()
                                             with dpg.table_row():
                                                 dpg.add_spacer(width=50,tag="LeftSpacerPlay")
-                                                dpg.add_button(label="PLAY",width=-1)
+                                                dpg.add_button(label="PLAY",width=-1,callback=self.play_button_callback,tag="PlayStopButton")
                                                 dpg.add_spacer(width=50,tag="RightSpacerPlay")
                                     with dpg.table_row():
                                         with dpg.table(resizable=True,header_row=False,reorderable=True):
@@ -370,10 +374,13 @@ class Manager():
         """
             Callback para el botón de inferencia, verifica el video, inicia los procesos, inicia la inferencia y cambia de pantalla
         """
-        video_path:str = dpg.get_value('inputText1')
-        cap = cv.VideoCapture(video_path)
-        self.total_frames = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
-        cap.release()
+        self.video_path:str = dpg.get_value('inputText1')
+        self.cap = cv.VideoCapture(self.video_path)
+        self.total_frames = int(self.cap.get(cv.CAP_PROP_FRAME_COUNT))
+        ret, self.first_image = self.cap.read()#Nos guardamos la primera imagen para futuro
+        if not ret:
+            self.first_image = None
+            self.cap.release()
 
         results_pipe = mp.Pipe(duplex=False) #(Output,Input) de una conexión unidireccional entre el proceso main y el proceso de resultados
         inference_pipe = mp.Pipe(duplex=False) #Tubería para que el proceso de inferencia le vaya pasando las imágenes al de procesado de resultados
@@ -381,13 +388,13 @@ class Manager():
         self.model = model()
         self.data_processor = Data_Processor(inference_pipe[0],results_pipe[1],self.total_frames)
         self.frame_enpoint = results_pipe[0]
-        self.model.video_inference(inference_pipe[1],video_path)
+        self.model.video_inference(inference_pipe[1],self.video_path)
         self.data_processor.start()
         self.infiriendo = True
         dpg.set_value(item="TextProgreso",value=f"Vamos por el frame 0 de {self.total_frames}")
         dpg.set_value(item="progreso",value=0.0)
 
-        self.video_name = video_path[video_path.rfind("\\")+1:]
+        self.video_name = self.video_path[self.video_path.rfind("\\")+1:]
 
         #Cambio de pantalla
         self.set_window("LoadingWindow")
@@ -407,7 +414,16 @@ class Manager():
             self.infiriendo = False
 
     def volver_callback(self,sender,app_data):
-        self.set_window("MainWindow")
+        """
+            Método callback para cerrar el proceso de obtención de imagenes y volver a la pantalla inicial
+        """
+        try:
+            self.video_controller.terminate()
+            self.video_controller.close()
+        except:
+            pass
+        finally:
+            self.set_window("MainWindow")
 
 
     def save_results_callback(self,sender,app_data):
@@ -428,6 +444,18 @@ class Manager():
         except Exception as e:
             print(e)
     
+    def play_button_callback(self,sender,app_data):
+        """
+            Método para controlar el pulsado del play sobre el video
+        """
+        label = dpg.get_item_configuration(sender)['label']
+        if label == "PLAY":
+            self.control_pipe_endpoint.send(True)
+            dpg.configure_item(sender,label="STOP")
+        else:
+            self.control_pipe_endpoint.send(False)
+            dpg.configure_item(sender,label="PLAY")
+
     def clicked_callback(self,sender,app_data):
         """
             Método para registrar el frame seleccionado
@@ -467,7 +495,8 @@ class Manager():
             #TimeLine
             dpg.set_item_height("TimeLinePlot",dpg.get_item_rect_size("EditarWindow")[1]/7.5)
             dpg.set_item_height("TimeLinePlot2",dpg.get_item_rect_size("EditarWindow")[1]/7.5)
-
+            if self.video_frames_pipe_endpoint.poll():
+                dpg.set_value("VideoTexture",self.video_frames_pipe_endpoint.recv())
         if self.infiriendo:
             #Ajustamos el icono de cargado para que este centrado
             dpg.set_item_width("LeftSpacerInfiriendo",(dpg.get_item_rect_size(self.active_window)[0]-dpg.get_item_rect_size("LoadingIcon")[0]-3)/2)
@@ -482,6 +511,7 @@ class Manager():
                         dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {datos +1} de {self.total_frames}")
                 else:
                     #Limpiamos variables anteriores
+                    self.infiriendo=False
                     self.left_moves = 0
                     self.right_moves = 0
                     self.dataset_global_left = None
@@ -511,6 +541,18 @@ class Manager():
                     #Configurar textos
                     dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
                     if fish_number == 2: dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
+
+                    #Configuramos la primera imágen del video
+                    self.set_first_image()
+
+                    #Iniciamos el proceso de obtención de imagen del video
+                    control_pipe = mp.Pipe(duplex=False) #(Output,Input) de una conexión unidireccional entre el proceso main y el proceso de resultados
+                    video_frames_pipe = mp.Pipe(duplex=False) #(Output,Input) de una conexión unidireccional entre el proceso main y el proceso de resultados
+                    self.control_pipe_endpoint = control_pipe[1]
+                    self.video_frames_pipe_endpoint = video_frames_pipe[0]
+                    self.video_controller = Controller(control_pipe[0],video_frames_pipe[1],dpg.get_value('inputText1'))
+                    self.video_controller.start()
+                    #Cambiamos de ventana
                     self.set_window("DataWindow")
 
 
@@ -609,10 +651,25 @@ class Manager():
                     self.right_frames.append(i[1])
                     for frame in i[0]:
                         self.real_mov_right[frame] = 1
-                
+    
+    def set_first_image(self):
+        if self.first_image is not None:
+            self.actual_image = self.first_image.copy()
+            frame_rgb = cv.resize(self.first_image,(720,480))
+            frame_rgb = cv.cvtColor(frame_rgb,cv.COLOR_BGR2RGB)
             
+            data = frame_rgb.flatten().astype(np.float32)/255
+            dpg.set_value("VideoTexture",data)
 
-
+    def next_frame(self):
+        ret, frame = self.cap.read()
+        data = None
+        if ret:
+            self.actual_image = frame.copy()
+            frame_rgb = cv.resize(frame,(720,480))
+            frame_rgb = cv.cvtColor(frame_rgb,cv.COLOR_BGR2RGB)
+            data = frame_rgb.flatten().astype(np.float32)/255
+        return data
 
     def set_window(self,window_name:str):
         """
@@ -629,3 +686,17 @@ class Manager():
         else:
             self.data_mode = False
         dpg.set_primary_window(window_name,True)
+
+    def general_close_callback(self):
+        try:
+            if self.infiriendo:
+                self.data_processor.terminate()
+                self.data_processor.close()
+            elif self.data_mode:
+                self.video_controller.terminate()
+                self.video_controller.close()
+        except:
+            pass
+        finally:
+            if self.infiriendo:
+                self.model.stop_video_inference()
