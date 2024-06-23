@@ -453,15 +453,38 @@ class Manager():
             dpg.configure_item(sender,label="PLAY")
 
     def add_left_callback(self,sender,app_data):
-        pass
+        """
+            Método callback para añadir manualmente un movimiento y región cercana en la izquierda
+        """
+        #A través del valor interno marcamos esa zona y actualizamos las gráficas
+        if self.clicked_left not in self.left_frames:
+            zone = [self.clicked_left-2,self.clicked_left-1,self.clicked_left,self.clicked_left,self.clicked_left+1,self.clicked_left+1]
+            self.left_moves = self.left_moves + 1
+            self.left_frames.append(self.clicked_left)
+            self.left_frames.sort()
+            for i in zone:
+                self.real_mov_left[i] = 1
+                self.prob_mov_left[i] = 0
+            dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
+            dpg.set_value("ZonasConFrame",[self.eje_frame,self.real_mov_left,np.zeros(self.real_mov_left.shape)])
+            dpg.set_value("ZonasSinFrame",[self.eje_frame,self.prob_mov_left,np.zeros(self.prob_mov_left.shape)])
 
     def add_right_callback(self,sender,app_data):
+        """
+            Método callback para añadir manualmente un movimiento y región cercana en la derecha
+        """
         pass
     
     def del_left_callback(self,sender,app_data):
+        """
+            Método callback para eliminar manualmente un movimiento y su región en la izquierda
+        """
         pass
 
     def del_right_callback(self,sender,app_data):
+        """
+            Método callback para eliminar manualmente un movimiento y su región en la derecha
+        """
         pass
 
     def clicked_callback(self,sender,app_data):
