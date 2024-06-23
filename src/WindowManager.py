@@ -62,15 +62,33 @@ class Manager():
                         with dpg.child_window(autosize_x=True,height=120,border=False):
                             boton = dpg.add_button(label="Manual de usuario",callback=self.show_manual)
                             dpg.bind_item_font(boton,"MidFont")
-                            with dpg.window(label="Manual de usuario", modal=True, show=False, tag="ManualModalWindow"):
+                            with dpg.window(label="Manual de usuario", modal=True, show=False, tag="ManualModalWindow",width=1000,height=400):
                                 titulo = dpg.add_text("Aplicación de automatización del experimento NetTest")
                                 dpg.bind_item_font(titulo,"NormalFont")
                                 dpg.add_text("Parte del TFG de Diego Aceituno Seoane",bullet=True)
                                 dpg.add_text("diego.aceituno@alumnos.upm.es",bullet=True)
-                                with dpg.collapsing_header(label="Estructura básica y limitaciones"):
-                                    dpg.add_text("")
-                                with dpg.collapsing_header(label="Ventana de inicio"):
-                                    dpg.add_text("")
+                                with dpg.collapsing_header(label="Ventana de inicio y limitaciones sobre el video"):
+                                    dpg.add_text("Esta ventana permite seleccionar el fichero que vamos a utilizar sobre el cual vamos a realizar la inferencia.\n"+
+                                                 "La selección de este fichero esta limitada por el tipo de archivo soportado. Las extensiones de archivos soportadas son:")
+                                    dpg.add_text(".asf",bullet=True)
+                                    dpg.add_text(".avi",bullet=True)
+                                    dpg.add_text(".gif",bullet=True)
+                                    dpg.add_text(".m4v",bullet=True)
+                                    dpg.add_text(".mkv",bullet=True)
+                                    dpg.add_text(".mov",bullet=True)
+                                    dpg.add_text(".mp4",bullet=True)
+                                    dpg.add_text(".mpeg",bullet=True)
+                                    dpg.add_text(".mpg",bullet=True)
+                                    dpg.add_text(".ts",bullet=True)
+                                    dpg.add_text(".wmv",bullet=True)
+                                    dpg.add_text(".webm",bullet=True)
+                                    dpg.add_text("Además de esta limitación sobre el formato, se exige al usuario que el video seleccionado cumpla 2 condiciones:")
+                                    dpg.add_text("El video debe estar en local, OneDrive no permite un funcionamiento correcto",bullet=True)
+                                    dpg.add_text("El video no debe durar menos de 50 fotogramas, esto se utiliza para estimar si exiten 1 o 2 truchas.",bullet=True)
+                                    dpg.add_text("Aparte de esto, es recomendable que el video sea 16:9 en relación de aspecto y el pez no ocupe toda la pantalla.")
+                                    dpg.add_spacer()
+                                    text = dpg.add_text("Una vez se seleccione el fichero, aparecera el botón para pasar a realizar la inferencia.")
+                                    dpg.bind_item_font(text,"NormalFont")
                                 with dpg.collapsing_header(label="Inferencia y pantalla de carga"):
                                     dpg.add_text("")
                                 with dpg.collapsing_header(label="Pantalla de datos"):
