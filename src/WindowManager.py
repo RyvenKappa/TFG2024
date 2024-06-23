@@ -43,8 +43,8 @@ class Manager():
         self.video_controller = None
         self.clicked_stem_left = None
         self.clicked_stem_right = None
-        self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo    
-        #Clicked handlers
+        self.eje_frame = np.linspace(start=1,stop=190,num=190) # Eje simple para el stado inicial de las gráficas 
+        #Handler para los clicks sobre diversos elementos
         with dpg.item_handler_registry(tag="Handlers") as handlers:
             dpg.add_item_clicked_handler(callback=self.clicked_callback)
         self.start_screen()
@@ -120,7 +120,6 @@ class Manager():
                     dpg.add_table_column()
                     dpg.add_table_column()
                     with dpg.table_row():
-                        #dpg.add_image(texture_tag="pescadoGirando",tag="TexturaPez")#TODO pescado girando
                                 dpg.add_spacer()
                                 with dpg.table(resizable=False,header_row=False,reorderable=True):
                                     dpg.add_table_row()
