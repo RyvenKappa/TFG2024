@@ -285,7 +285,7 @@ class Manager():
                                                         dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasConFrame",parent="y_axis")  # Rojo
                                                         dpg.bind_item_theme(dpg.last_item(),"timeline_red_theme")
                                                         dpg.set_axis_limits("y_axis",0,1)
-                                                        dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasSinFrame",parent="y_axis")  # Rojo
+                                                        dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasSinFrame",parent="y_axis")  # Verde
                                                         dpg.bind_item_theme(dpg.last_item(),"timeline_green_theme")
                                                         dpg.set_axis_limits("y_axis",0,1)
                                                         dpg.add_stem_series(self.eje_frame,np.ones(190),tag="ClickedStem",parent="y_axis")
@@ -300,7 +300,7 @@ class Manager():
                                                         dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasConFrame2",parent="y_axis2")  # Rojo
                                                         dpg.bind_item_theme(dpg.last_item(),"timeline_red_theme")
                                                         dpg.set_axis_limits("y_axis2",0,1)
-                                                        dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasSinFrame2",parent="y_axis2")  # Rojo
+                                                        dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasSinFrame2",parent="y_axis2")  # Verde
                                                         dpg.bind_item_theme(dpg.last_item(),"timeline_green_theme")
                                                         dpg.set_axis_limits("y_axis2",0,1)
                                                         dpg.add_stem_series(self.eje_frame,np.ones(190),tag="ClickedStem2",parent="y_axis2")
