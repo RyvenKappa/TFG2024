@@ -487,6 +487,7 @@ class Manager():
         except:
             pass
         finally:
+            dpg.configure_item("PlayStopButton",label="PLAY")
             self.set_window("MainWindow")
 
 
