@@ -62,6 +62,9 @@ class Manager():
                         with dpg.child_window(autosize_x=True,height=120,border=False):
                             boton = dpg.add_button(label="Manual de usuario",callback=self.show_manual)
                             dpg.bind_item_font(boton,"MidFont")
+                            with dpg.window(label="Error al intentar inferir",modal=True,show=False,tag="ModalWindowError"):
+                                texto = dpg.add_text("",tag="TextoError")
+                                dpg.bind_item_font(texto,"MidFont")
                             with dpg.window(label="Manual de usuario", modal=True, show=False, tag="ManualModalWindow",width=1000,height=400):
                                 titulo = dpg.add_text("Aplicación de automatización del experimento NetTest")
                                 dpg.bind_item_font(titulo,"NormalFont")
@@ -411,6 +414,11 @@ class Manager():
         self.video_path:str = dpg.get_value('inputText1')
         self.cap = cv.VideoCapture(self.video_path)
         self.total_frames = int(self.cap.get(cv.CAP_PROP_FRAME_COUNT))
+        if self.total_frames <51:
+            dpg.show_item("ModalWindowError")
+            dpg.set_value("TextoError","Error, el video dura menos de 50 fotogramas")
+            self.cap.release()
+            return
         ret, self.first_image = self.cap.read()#Nos guardamos la primera imagen para futuro
         if not ret:
             self.first_image = None
