@@ -473,7 +473,17 @@ class Manager():
         """
             Método callback para añadir manualmente un movimiento y región cercana en la derecha
         """
-        pass
+        if self.clicked_right not in self.right_frames:
+            zone = [self.clicked_right-2,self.clicked_right-1,self.clicked_right,self.clicked_right,self.clicked_right+1,self.clicked_right+1]
+            self.right_moves = self.right_moves + 1
+            self.right_frames.append(self.clicked_right)
+            self.right_frames.sort()
+            for i in zone:
+                self.real_mov_right[i] = 1
+                self.prob_mov_right[i] = 0
+            dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
+            dpg.set_value("ZonasConFrame2",[self.eje_frame,self.real_mov_right,np.zeros(self.real_mov_right.shape)])
+            dpg.set_value("ZonasSinFrame2",[self.eje_frame,self.prob_mov_right,np.zeros(self.prob_mov_right.shape)])
     
     def del_left_callback(self,sender,app_data):
         """
