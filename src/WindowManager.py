@@ -60,14 +60,7 @@ class Manager():
                     dpg.add_table_column(tag="Columna2")
                     with dpg.table_row():
                         with dpg.child_window(autosize_x=True,height=120,border=False):
-                            dpg.add_input_text(
-                                source="config_user",
-                                no_spaces=True,
-                                width=2000,
-                                hint="Introduzca el Usuario:",
-                                tag="UsuarioInputText"
-                            )
-                            dpg.add_button(label="Cargar usuario")#TODO quitarlo
+                            boton = dpg.add_button(label="Manual",callback=self.show_manual)
                         dpg.add_image(texture_tag="texturaGamma",tag="ImagenGamma")
             with dpg.table(tag="MainTable",resizable=False,header_row=False,reorderable=True):
                 dpg.add_table_row()
@@ -137,7 +130,7 @@ class Manager():
                         dpg.add_spacer()
                     with dpg.table_row():
                         dpg.add_spacer()
-                        texto_carga = dpg.add_text(default_value=f"Vamos por el frame 0 de 0",label="Texto de progreso",tag="TextProgreso")
+                        texto_carga = dpg.add_text(default_value=f"0 fotogramas de 0 procesados",label="Texto de progreso",tag="TextProgreso")
                         dpg.bind_item_font(texto_carga,"MidFont")
                         dpg.add_spacer()
             boton_cancelar = dpg.add_button(width=-1,height=150,label="Cancelar Inferencia",show=True,tag="BotonCancelarInferencia",callback=self.cancelar_callback)
@@ -339,6 +332,12 @@ class Manager():
                                         dpg.add_file_extension("", color=(255,255,255,255))
                                 dpg.add_button(label="Guardar Resultados",width=-1,height=-1,callback=self.save_results_callback)
 
+    def show_manual(self,sender,app_data):
+        """
+            Método callback para enseñar el manual de usuario en un PopUp
+        """
+        pass
+
     def file_selected_callback(self,sender,app_data):
         """
             Callback para archivo seleccionado, registra el archivo seleccionado y lo pone en el inputText1
@@ -387,7 +386,7 @@ class Manager():
         self.model.video_inference(inference_pipe[1],self.video_path)
         self.data_processor.start()
         self.infiriendo = True
-        dpg.set_value(item="TextProgreso",value=f"Vamos por el frame 0 de {self.total_frames}")
+        dpg.set_value(item="TextProgreso",value=f"0 fotogramas de {self.total_frames} procesados")
         dpg.set_value(item="progreso",value=0.0)
 
         self.video_name = self.video_path[self.video_path.rfind("\\")+1:]
@@ -581,7 +580,7 @@ class Manager():
                     self.nuevo_frame = True
                     if self.nuevo_frame:
                         dpg.set_value(item="progreso",value=(datos+1)/self.total_frames)
-                        dpg.set_value(item="TextProgreso",value=f"Vamos por el frame {datos +1} de {self.total_frames}")
+                        dpg.set_value(item="TextProgreso",value=f"{datos +1} fotogramas de {self.total_frames} procesados")
                 else:
                     #Limpiamos variables anteriores
                     self.infiriendo=False
