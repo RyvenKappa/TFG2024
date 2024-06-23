@@ -67,7 +67,7 @@ class Manager():
                                 hint="Introduzca el Usuario:",
                                 tag="UsuarioInputText"
                             )
-                            dpg.add_button(label="Cargar usuario",callback=self.set_user_callback)#TODO
+                            dpg.add_button(label="Cargar usuario")#TODO quitarlo
                         dpg.add_image(texture_tag="texturaGamma",tag="ImagenGamma")
             with dpg.table(tag="MainTable",resizable=False,header_row=False,reorderable=True):
                 dpg.add_table_row()
@@ -315,10 +315,10 @@ class Manager():
                                             dpg.add_table_column()
                                             dpg.add_table_column()
                                             with dpg.table_row():
-                                                dpg.add_button(width=-1,label="Añadir a la Izquierda",tag="AddLeft")
-                                                dpg.add_button(width=-1,label="Eliminar en la Izquierda",tag="DelLeft")
-                                                dpg.add_button(width=-1,label="Añadir a la Derecha",tag="AddRight")
-                                                dpg.add_button(width=-1,label="Eliminar en la Derecha",tag="DelRight")
+                                                dpg.add_button(width=-1,label="Añadir a la Izquierda",tag="AddLeft",callback=self.add_left_callback)
+                                                dpg.add_button(width=-1,label="Eliminar en la Izquierda",tag="DelLeft",callback=self.del_left_callback)
+                                                dpg.add_button(width=-1,label="Añadir a la Derecha",tag="AddRight",callback=self.add_right_callback)
+                                                dpg.add_button(width=-1,label="Eliminar en la Derecha",tag="DelRight",callback=self.del_right_callback)
                         with dpg.table(resizable=False,header_row=False,reorderable=True):
                             dpg.add_table_row()
                             dpg.add_table_column()
@@ -459,6 +459,18 @@ class Manager():
         else:
             self.control_pipe_endpoint.send(False)
             dpg.configure_item(sender,label="PLAY")
+
+    def add_left_callback(self,sender,app_data):
+        pass
+
+    def add_right_callback(self,sender,app_data):
+        pass
+    
+    def del_left_callback(self,sender,app_data):
+        pass
+
+    def del_right_callback(self,sender,app_data):
+        pass
 
     def clicked_callback(self,sender,app_data):
         """
