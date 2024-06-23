@@ -60,7 +60,8 @@ class Manager():
                     dpg.add_table_column(tag="Columna2")
                     with dpg.table_row():
                         with dpg.child_window(autosize_x=True,height=120,border=False):
-                            boton = dpg.add_button(label="Manual",callback=self.show_manual)
+                            boton = dpg.add_button(label="Manual de usuario",callback=self.show_manual)
+                            dpg.bind_item_font(boton,"MidFont")
                         dpg.add_image(texture_tag="texturaGamma",tag="ImagenGamma")
             with dpg.table(tag="MainTable",resizable=False,header_row=False,reorderable=True):
                 dpg.add_table_row()
@@ -70,9 +71,11 @@ class Manager():
                 dpg.add_table_row()
                 dpg.add_table_column(width_stretch=True)
                 with dpg.table_row():
-                    dpg.add_text(default_value="Seleccione el video sobre el que realizar la inferencia:")
+                    textoSeleccion = dpg.add_text(default_value="Seleccione el video sobre el que realizar la inferencia:")
+                    dpg.bind_item_font(textoSeleccion,"NormalFont")
                 with dpg.table_row():
-                    dpg.add_button(label="Seleccionar fichero", callback=lambda:dpg.configure_item("__Explorador",show=True))
+                    botonSeleccionar = dpg.add_button(label="Seleccionar fichero", callback=lambda:dpg.configure_item("__Explorador",show=True))
+                    dpg.bind_item_font(botonSeleccionar,"NormalFont")
                 with dpg.table_row():
                     i_text = dpg.add_input_text(tag="inputText1",width=400,readonly=True)
                     dpg.bind_item_font(i_text,"NormalFont")
