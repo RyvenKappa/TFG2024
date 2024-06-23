@@ -315,10 +315,10 @@ class Manager():
                                             dpg.add_table_column()
                                             dpg.add_table_column()
                                             with dpg.table_row():
-                                                dpg.add_button(width=-1,label="Añadir a la Izquierda")
-                                                dpg.add_button(width=-1,label="Eliminar en la Izquierda")
-                                                dpg.add_button(width=-1,label="Añadir a la Derecha")
-                                                dpg.add_button(width=-1,label="Eliminar en la Derecha")
+                                                dpg.add_button(width=-1,label="Añadir a la Izquierda",tag="AddLeft")
+                                                dpg.add_button(width=-1,label="Eliminar en la Izquierda",tag="DelLeft")
+                                                dpg.add_button(width=-1,label="Añadir a la Derecha",tag="AddRight")
+                                                dpg.add_button(width=-1,label="Eliminar en la Derecha",tag="DelRight")
                         with dpg.table(resizable=False,header_row=False,reorderable=True):
                             dpg.add_table_row()
                             dpg.add_table_column()
@@ -597,6 +597,8 @@ class Manager():
             dpg.show_item("GraficaFinalDerecha")
             dpg.show_item("MovimientosDerecha")
             dpg.show_item("TimeLinePlot2")
+            dpg.show_item("AddRight")
+            dpg.show_item("DelRight")
             #Los cargo de datos
             dpg.set_value("Area_Derecha",[eje_frame, self.dataset_global_right['area'].tolist()])
             dpg.set_value("Centroide_Derecha",[eje_frame, self.dataset_global_right['centroide_change'].tolist()])
@@ -614,6 +616,8 @@ class Manager():
             dpg.hide_item("GraficaFinalDerecha")
             dpg.hide_item("MovimientosDerecha")
             dpg.hide_item("TimeLinePlot2")
+            dpg.hide_item("AddRight")
+            dpg.hide_item("DelRight")
         #Les pongo limites de zoom-out en x
         dpg.set_axis_limits("area_x",0,self.total_frames)
         dpg.set_axis_limits("centroide_x",0,self.total_frames)
