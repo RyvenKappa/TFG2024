@@ -9,9 +9,11 @@ def set_config():
         dpg.add_font("src/font/Aptos.ttf",16,tag="SmallFont")
     #Cargado de imagenes dinámicas
     width, height, channels, data = dpg.load_image("src/images/Gamma.png")
+    width2, height2, channels2, data2 = dpg.load_image("src/images/LoadingScreen.png")
     #width1,height1,channels1,data1 = dpg.load_image("src/images/pescado.gif")
     with dpg.texture_registry(show=False):
         dpg.add_static_texture(width=width, height=height, default_value=data, tag="texturaGamma")
+        dpg.add_static_texture(width=width2, height=height2, default_value=data2, tag="texturaLoadingManual")
         dpg.add_raw_texture(width=720,height=480,default_value=np.ones((480*720*3)),tag="VideoTexture",format=dpg.mvFormat_Float_rgb)
         #dpg.add_dynamic_texture(width=width1, height=height1, default_value=data1, tag="pescadoGirando")
     

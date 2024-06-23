@@ -90,7 +90,11 @@ class Manager():
                                     text = dpg.add_text("Una vez se seleccione el fichero, aparecera el botón para pasar a realizar la inferencia.")
                                     dpg.bind_item_font(text,"NormalFont")
                                 with dpg.collapsing_header(label="Inferencia y pantalla de carga"):
-                                    dpg.add_text("")
+                                    text = dpg.add_text("Esta pantalla muestra el progreso de la inferencia sobre el video administrado.\n"+
+                                                 "Aparte de esto, nos permite volver a la pantalla anterior si hemos seleccionado un video erroneo o ya parametrizado.\n"+
+                                                 "En cuanto el progreso finalize, se pasará directamente a la ventana de análisis de datos")
+                                    dpg.bind_item_font(text,"NormalFont")
+                                    dpg.add_image(texture_tag="texturaLoadingManual")
                                 with dpg.collapsing_header(label="Pantalla de datos"):
                                     dpg.add_text("")
                         dpg.add_image(texture_tag="texturaGamma",tag="ImagenGamma")
