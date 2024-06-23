@@ -339,13 +339,6 @@ class Manager():
                                         dpg.add_file_extension("", color=(255,255,255,255))
                                 dpg.add_button(label="Guardar Resultados",width=-1,height=-1,callback=self.save_results_callback)
 
-    def set_user_callback(self,sender,app_data):
-        """
-            Callback para configurar el usuario de la aplicación y añadir el path de los resultados anteriores
-        """
-        #TODO
-        pass
-
     def file_selected_callback(self,sender,app_data):
         """
             Callback para archivo seleccionado, registra el archivo seleccionado y lo pone en el inputText1
