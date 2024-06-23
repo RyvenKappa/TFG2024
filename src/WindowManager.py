@@ -41,6 +41,8 @@ class Manager():
         self.left_frames = []
         self.right_frames = []
         self.video_controller = None
+        self.clicked_stem_left = None
+        self.clicked_stem_right = None
         self.eje_frame = np.linspace(start=1,stop=190,num=190) # por ejemplo    
         #Clicked handlers
         with dpg.item_handler_registry(tag="Handlers") as handlers:
@@ -286,6 +288,7 @@ class Manager():
                                                         dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasSinFrame",parent="y_axis")  # Rojo
                                                         dpg.bind_item_theme(dpg.last_item(),"timeline_green_theme")
                                                         dpg.set_axis_limits("y_axis",0,1)
+                                                        dpg.add_stem_series(self.eje_frame,np.ones(190),tag="ClickedStem",parent="y_axis")
                                                 dpg.bind_item_handler_registry("TimeLinePlot","Handlers")
 
                                                 with dpg.plot(width=-1, height=-1,tag="TimeLinePlot2"):
@@ -300,6 +303,7 @@ class Manager():
                                                         dpg.add_shade_series(self.eje_frame,y1=np.ones(190),tag="ZonasSinFrame2",parent="y_axis2")  # Rojo
                                                         dpg.bind_item_theme(dpg.last_item(),"timeline_green_theme")
                                                         dpg.set_axis_limits("y_axis2",0,1)
+                                                        dpg.add_stem_series(self.eje_frame,np.ones(190),tag="ClickedStem2",parent="y_axis2")
 
                                                 dpg.bind_item_handler_registry("TimeLinePlot2","Handlers")
 
@@ -460,17 +464,21 @@ class Manager():
         """
             Método para registrar el frame seleccionado
         """
+        self.clicked_stem_left = np.full(self.total_frames,-1)
+        self.clicked_stem_right = np.full(self.total_frames,-1)
         self.clicked_left = None
         self.clicked_right = None
         item_clickeado = dpg.get_item_alias(app_data[1])
         if item_clickeado == "TimeLinePlot":
             self.clicked_left = round(dpg.get_plot_mouse_pos()[0])
             self.new_click = True
-            print(f"{self.clicked_left} clicked")
+            self.clicked_stem_left[round(dpg.get_plot_mouse_pos()[0])] = 2
         elif item_clickeado == "TimeLinePlot2":
             self.clicked_right = round(dpg.get_plot_mouse_pos()[0])
             self.new_click = True
-            print(f"{self.clicked_right} clicked")
+            self.clicked_stem_right[round(dpg.get_plot_mouse_pos()[0])] = 2
+        dpg.set_value("ClickedStem",[self.eje_frame,self.clicked_stem_left])
+        dpg.set_value("ClickedStem2",[self.eje_frame,self.clicked_stem_right])
 
 
 
@@ -558,6 +566,7 @@ class Manager():
 
     def set_data_graphs(self):
         eje_frame = np.linspace(start=0,stop=self.total_frames-1,num=self.total_frames) # Creamos el eje de fotogramas
+        self.eje_frame = eje_frame
         #Configuramos las gráficas de la Izquierda
         dpg.set_value("Area_Izquierda",[eje_frame, self.dataset_global_left['area'].tolist()])
         dpg.set_value("Centroide_Izquierda",[eje_frame, self.dataset_global_left['centroide_change'].tolist()])
@@ -567,11 +576,11 @@ class Manager():
         dpg.set_value("Centroide_IzquierdaCompleta",[eje_frame, self.dataset_global_left['centroide_change'].tolist()])
         dpg.set_value("Blur_IzquierdaCompleta",[eje_frame, self.dataset_global_left['blur'].tolist()])
         #Valores de la timeline
-        print(f"{len(eje_frame)} y un una señal de {len(self.real_mov_left)}")
         dpg.set_value("ZonasConFrame",[eje_frame,self.real_mov_left,np.zeros(self.real_mov_left.shape)])
         dpg.set_value("ZonasSinFrame",[eje_frame,self.prob_mov_left,np.zeros(self.prob_mov_left.shape)])
         dpg.set_value("ZonasConFrame2",[eje_frame,self.real_mov_right,np.zeros(self.real_mov_right.shape)])
         dpg.set_value("ZonasSinFrame2",[eje_frame,self.prob_mov_right,np.zeros(self.prob_mov_right.shape)])
+        dpg.set_value("ClickedStem",[eje_frame,np.full(self.total_frames,-1)])
 
         if type(self.dataset_global_right)!= type(None):
             #Muestro los items
@@ -590,6 +599,7 @@ class Manager():
             dpg.set_value("Area_DerechaCompleta",[eje_frame, self.dataset_global_right['area'].tolist()])
             dpg.set_value("Centroide_DerechaCompleta",[eje_frame, self.dataset_global_right['centroide_change'].tolist()])
             dpg.set_value("Blur_DerechaCompleta",[eje_frame, self.dataset_global_right['blur'].tolist()])
+            dpg.set_value("ClickedStem2",[eje_frame,np.full(self.total_frames,-1)])
         else:
             dpg.hide_item("Area_Derecha")
             dpg.hide_item("Centroide_Derecha")
