@@ -468,17 +468,23 @@ class Manager():
         self.clicked_stem_right = np.full(self.total_frames,-1)
         self.clicked_left = None
         self.clicked_right = None
+        self.frame_clicked = 0
         item_clickeado = dpg.get_item_alias(app_data[1])
         if item_clickeado == "TimeLinePlot":
             self.clicked_left = round(dpg.get_plot_mouse_pos()[0])
+            self.frame_clicked = self.clicked_left
             self.new_click = True
             self.clicked_stem_left[round(dpg.get_plot_mouse_pos()[0])] = 2
         elif item_clickeado == "TimeLinePlot2":
             self.clicked_right = round(dpg.get_plot_mouse_pos()[0])
+            self.frame_clicked = self.clicked_right
             self.new_click = True
             self.clicked_stem_right[round(dpg.get_plot_mouse_pos()[0])] = 2
         dpg.set_value("ClickedStem",[self.eje_frame,self.clicked_stem_left])
         dpg.set_value("ClickedStem2",[self.eje_frame,self.clicked_stem_right])
+        #Paramos el video, cambiamos la label y además cambiamos la posición del video para que vaya a ese momento
+        self.control_pipe_endpoint.send(self.frame_clicked)
+        dpg.configure_item("PlayStopButton",label="PLAY")
 
 
 

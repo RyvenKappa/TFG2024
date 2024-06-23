@@ -31,6 +31,7 @@ class Controller(mp.Process):
                         self.frame_input_endpoint.send(self.next_frame())
                         time.sleep(self.t)
                     else:
+                        self.play = False
                         self.cap.set(cv.CAP_PROP_POS_FRAMES, 0)
                 else:
                     self.procesar_mensaje(self.control_output_endpoint.recv())
@@ -45,7 +46,7 @@ class Controller(mp.Process):
             self.play = False
         elif type(mensaje) is int:
             self.cap.set(cv.CAP_PROP_POS_FRAMES, mensaje)
-            self.frame_input_endpoint.send(self.next_frame())
+            self.play = False
 
     def next_frame(self):
             """
