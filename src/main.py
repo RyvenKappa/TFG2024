@@ -21,6 +21,7 @@ def main():
         manager.update()
         dpg.render_dearpygui_frame()
     dpg.destroy_context()
+    manager.general_close_callback()
 
 if __name__ == "__main__":
     import multiprocessing
