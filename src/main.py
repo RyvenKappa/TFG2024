@@ -12,6 +12,8 @@ def main():
     config_dpg.set_config()#Cargamos la configuración
     manager = Manager()#Creamos el manejador de ventanas
     dpg.create_viewport(title="Auto-NetTest",width=1500,height=750,vsync=True)
+    dpg.set_viewport_small_icon("src/images/icono.ico")
+    dpg.set_viewport_large_icon("src/images/icono.ico")
     dpg.set_primary_window("MainWindow",True)
     dpg.show_viewport()
     dpg.setup_dearpygui()

@@ -62,6 +62,19 @@ class Manager():
                         with dpg.child_window(autosize_x=True,height=120,border=False):
                             boton = dpg.add_button(label="Manual de usuario",callback=self.show_manual)
                             dpg.bind_item_font(boton,"MidFont")
+                            with dpg.window(label="Manual de usuario", modal=True, show=False, tag="ManualModalWindow"):
+                                titulo = dpg.add_text("Aplicación de automatización del experimento NetTest")
+                                dpg.bind_item_font(titulo,"NormalFont")
+                                dpg.add_text("Parte del TFG de Diego Aceituno Seoane",bullet=True)
+                                dpg.add_text("diego.aceituno@alumnos.upm.es",bullet=True)
+                                with dpg.collapsing_header(label="Estructura básica y limitaciones"):
+                                    dpg.add_text("")
+                                with dpg.collapsing_header(label="Ventana de inicio"):
+                                    dpg.add_text("")
+                                with dpg.collapsing_header(label="Inferencia y pantalla de carga"):
+                                    dpg.add_text("")
+                                with dpg.collapsing_header(label="Pantalla de datos"):
+                                    dpg.add_text("")
                         dpg.add_image(texture_tag="texturaGamma",tag="ImagenGamma")
             with dpg.table(tag="MainTable",resizable=False,header_row=False,reorderable=True):
                 dpg.add_table_row()
@@ -339,6 +352,7 @@ class Manager():
         """
             Método callback para enseñar el manual de usuario en un PopUp
         """
+        dpg.show_item("ManualModalWindow")
         pass
 
     def file_selected_callback(self,sender,app_data):
@@ -494,7 +508,6 @@ class Manager():
         zone = [self.clicked_left-2,self.clicked_left-1,self.clicked_left,self.clicked_left+1,self.clicked_left+2]
         for i in zone:
             if i in self.left_frames:
-                #zone2 = [i-2,i-1,i,i+1,i+2]
                 zone2 = list(range(i-5,i+5))
                 self.left_moves = self.left_moves - 1
                 self.left_frames.remove(i)
