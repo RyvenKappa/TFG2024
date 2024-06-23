@@ -489,7 +489,6 @@ class Manager():
         """
             Método callback para eliminar manualmente un movimiento y su región en la izquierda
         """
-        #TODO verificar por alrededor a ver si a 2 de distancia hay 1 frame de referencia y lo usamos
         zone = [self.clicked_left-2,self.clicked_left-1,self.clicked_left,self.clicked_left+1,self.clicked_left+2]
         for i in zone:
             if i in self.left_frames:
