@@ -526,66 +526,70 @@ class Manager():
             Método callback para añadir manualmente un movimiento y región cercana en la izquierda
         """
         #A través del valor interno marcamos esa zona y actualizamos las gráficas
-        if self.clicked_left not in self.left_frames:
-            zone = [self.clicked_left-2,self.clicked_left-1,self.clicked_left,self.clicked_left+1,self.clicked_left+2]
-            self.left_moves = self.left_moves + 1
-            self.left_frames.append(self.clicked_left)
-            self.left_frames.sort()
-            for i in zone:
-                self.real_mov_left[i] = 1
-                self.prob_mov_left[i] = 0
-            dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
-            dpg.set_value("ZonasConFrame",[self.eje_frame,self.real_mov_left,np.zeros(self.real_mov_left.shape)])
-            dpg.set_value("ZonasSinFrame",[self.eje_frame,self.prob_mov_left,np.zeros(self.prob_mov_left.shape)])
+        if self.clicked_left is not None:
+            if self.clicked_left not in self.left_frames:
+                zone = [self.clicked_left-2,self.clicked_left-1,self.clicked_left,self.clicked_left+1,self.clicked_left+2]
+                self.left_moves = self.left_moves + 1
+                self.left_frames.append(self.clicked_left)
+                self.left_frames.sort()
+                for i in zone:
+                    self.real_mov_left[i] = 1
+                    self.prob_mov_left[i] = 0
+                dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
+                dpg.set_value("ZonasConFrame",[self.eje_frame,self.real_mov_left,np.zeros(self.real_mov_left.shape)])
+                dpg.set_value("ZonasSinFrame",[self.eje_frame,self.prob_mov_left,np.zeros(self.prob_mov_left.shape)])
 
     def add_right_callback(self,sender,app_data):
         """
             Método callback para añadir manualmente un movimiento y región cercana en la derecha
         """
-        if self.clicked_right not in self.right_frames:
-            zone = [self.clicked_right-2,self.clicked_right-1,self.clicked_right,self.clicked_right+1,self.clicked_right+2]
-            self.right_moves = self.right_moves + 1
-            self.right_frames.append(self.clicked_right)
-            self.right_frames.sort()
-            for i in zone:
-                self.real_mov_right[i] = 1
-                self.prob_mov_right[i] = 0
-            dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
-            dpg.set_value("ZonasConFrame2",[self.eje_frame,self.real_mov_right,np.zeros(self.real_mov_right.shape)])
-            dpg.set_value("ZonasSinFrame2",[self.eje_frame,self.prob_mov_right,np.zeros(self.prob_mov_right.shape)])
+        if self.clicked_right is not None:
+            if self.clicked_right not in self.right_frames:
+                zone = [self.clicked_right-2,self.clicked_right-1,self.clicked_right,self.clicked_right+1,self.clicked_right+2]
+                self.right_moves = self.right_moves + 1
+                self.right_frames.append(self.clicked_right)
+                self.right_frames.sort()
+                for i in zone:
+                    self.real_mov_right[i] = 1
+                    self.prob_mov_right[i] = 0
+                dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
+                dpg.set_value("ZonasConFrame2",[self.eje_frame,self.real_mov_right,np.zeros(self.real_mov_right.shape)])
+                dpg.set_value("ZonasSinFrame2",[self.eje_frame,self.prob_mov_right,np.zeros(self.prob_mov_right.shape)])
     
     def del_left_callback(self,sender,app_data):
         """
             Método callback para eliminar manualmente un movimiento y su región en la izquierda
         """
-        zone = [self.clicked_left-2,self.clicked_left-1,self.clicked_left,self.clicked_left+1,self.clicked_left+2]
-        for i in zone:
-            if i in self.left_frames:
-                zone2 = list(range(i-5,i+5))
-                self.left_moves = self.left_moves - 1
-                self.left_frames.remove(i)
-                for i2 in zone2:
-                        self.real_mov_left[i2] = 0
-        dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez izquierdo: {self.left_moves} movimientos")
-        dpg.set_value("ZonasConFrame",[self.eje_frame,self.real_mov_left,np.zeros(self.real_mov_left.shape)])
-        dpg.set_value("ZonasSinFrame",[self.eje_frame,self.prob_mov_left,np.zeros(self.prob_mov_left.shape)])
+        if self.clicked_left is not None:
+            zone = [self.clicked_left-2,self.clicked_left-1,self.clicked_left,self.clicked_left+1,self.clicked_left+2]
+            for i in zone:
+                if i in self.left_frames:
+                    zone2 = list(range(i-5,i+5))
+                    self.left_moves = self.left_moves - 1
+                    self.left_frames.remove(i)
+                    for i2 in zone2:
+                            self.real_mov_left[i2] = 0
+            dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez izquierdo: {self.left_moves} movimientos")
+            dpg.set_value("ZonasConFrame",[self.eje_frame,self.real_mov_left,np.zeros(self.real_mov_left.shape)])
+            dpg.set_value("ZonasSinFrame",[self.eje_frame,self.prob_mov_left,np.zeros(self.prob_mov_left.shape)])
 
     def del_right_callback(self,sender,app_data):
         """
             Método callback para eliminar manualmente un movimiento y su región en la derecha
         """
-        zone = [self.clicked_right-2,self.clicked_right-1,self.clicked_right,self.clicked_right+1,self.clicked_right+2]
-        for i in zone:
-            if i in self.right_frames:
-                #zone2 = [i-2,i-1,i,i+1,i+2]
-                zone2 = list(range(i-5,i+5))
-                self.right_moves = self.right_moves - 1
-                self.right_frames.remove(i)
-                for i2 in zone2:
-                        self.real_mov_right[i2] = 0
-        dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
-        dpg.set_value("ZonasConFrame2",[self.eje_frame,self.real_mov_right,np.zeros(self.real_mov_right.shape)])
-        dpg.set_value("ZonasSinFrame2",[self.eje_frame,self.prob_mov_right,np.zeros(self.prob_mov_right.shape)])
+        if self.clicked_right is not None:
+            zone = [self.clicked_right-2,self.clicked_right-1,self.clicked_right,self.clicked_right+1,self.clicked_right+2]
+            for i in zone:
+                if i in self.right_frames:
+                    #zone2 = [i-2,i-1,i,i+1,i+2]
+                    zone2 = list(range(i-5,i+5))
+                    self.right_moves = self.right_moves - 1
+                    self.right_frames.remove(i)
+                    for i2 in zone2:
+                            self.real_mov_right[i2] = 0
+            dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
+            dpg.set_value("ZonasConFrame2",[self.eje_frame,self.real_mov_right,np.zeros(self.real_mov_right.shape)])
+            dpg.set_value("ZonasSinFrame2",[self.eje_frame,self.prob_mov_right,np.zeros(self.prob_mov_right.shape)])
 
     def clicked_callback(self,sender,app_data):
         """
