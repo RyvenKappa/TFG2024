@@ -66,7 +66,7 @@ class Movement_Estimator():
         for i in movement_data:
             a = self.apply_rules(i)
             if a > -1: result_data.append((i["frame"].to_list(),a))
-            else: result_data.append((i["frame"].to_list(),None))
+            elif a == -1: result_data.append((i["frame"].to_list(),None))
         return result_data
 
     def apply_rules(self,data:pd.DataFrame):
@@ -78,7 +78,7 @@ class Movement_Estimator():
         """
         gradiente_total = sum(data['area_gradient']) #No hay el suficiente cambio
         if gradiente_total>-1:
-            return -1
+            return -2
         if all(data['area_gradient'] > -0.8):
             return -1
         for rect in data['width_height_relation']: #Muy rectangular
