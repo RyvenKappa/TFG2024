@@ -303,10 +303,10 @@ class Manager():
                                                     dpg.add_line_series(self.eje_frame,y=np.zeros(190),label="blur_derecha",tag="Blur_DerechaCompleta")
 
                                     with dpg.table_row():
-                                        text = dpg.add_text("Numero total de movimientos del pez izquierdo: ",tag="MovimientosIzquierda")
-                                        dpg.bind_item_font(text,"SmallFont")
-                                        text = dpg.add_text("Numero total de movimientos del pez derecho: ",tag="MovimientosDerecha")
-                                        dpg.bind_item_font(text,"SmallFont")
+                                        text = dpg.add_text("Numero total de movimientos del pez izquierdo: ",tag="MovimientosIzquierda",color=(255,0,0,255))
+                                        dpg.bind_item_font(text,"NormalFont")
+                                        text = dpg.add_text("Numero total de movimientos del pez derecho: ",tag="MovimientosDerecha",color=(255,0,0,255))
+                                        dpg.bind_item_font(text,"NormalFont")
                     with dpg.child_window(no_scrollbar=True,height=-1,border=False):
                         with dpg.child_window(no_scrollbar=True,height=-300,tag="EditarWindow"):
                             with dpg.child_window(no_scrollbar=True,width=-1,height=100,tag="VideoWindow"):
@@ -535,7 +535,7 @@ class Manager():
                 for i in zone:
                     self.real_mov_left[i] = 1
                     self.prob_mov_left[i] = 0
-                dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
+                dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho:\n{self.left_moves} movimientos")
                 dpg.set_value("ZonasConFrame",[self.eje_frame,self.real_mov_left,np.zeros(self.real_mov_left.shape)])
                 dpg.set_value("ZonasSinFrame",[self.eje_frame,self.prob_mov_left,np.zeros(self.prob_mov_left.shape)])
 
@@ -552,7 +552,7 @@ class Manager():
                 for i in zone:
                     self.real_mov_right[i] = 1
                     self.prob_mov_right[i] = 0
-                dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
+                dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho:\n{self.right_moves} movimientos")
                 dpg.set_value("ZonasConFrame2",[self.eje_frame,self.real_mov_right,np.zeros(self.real_mov_right.shape)])
                 dpg.set_value("ZonasSinFrame2",[self.eje_frame,self.prob_mov_right,np.zeros(self.prob_mov_right.shape)])
     
@@ -569,7 +569,7 @@ class Manager():
                     self.left_frames.remove(i)
                     for i2 in zone2:
                             self.real_mov_left[i2] = 0
-            dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez izquierdo: {self.left_moves} movimientos")
+            dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez izquierdo:\n{self.left_moves} movimientos")
             dpg.set_value("ZonasConFrame",[self.eje_frame,self.real_mov_left,np.zeros(self.real_mov_left.shape)])
             dpg.set_value("ZonasSinFrame",[self.eje_frame,self.prob_mov_left,np.zeros(self.prob_mov_left.shape)])
 
@@ -587,7 +587,7 @@ class Manager():
                     self.right_frames.remove(i)
                     for i2 in zone2:
                             self.real_mov_right[i2] = 0
-            dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
+            dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho:\n{self.right_moves} movimientos")
             dpg.set_value("ZonasConFrame2",[self.eje_frame,self.real_mov_right,np.zeros(self.real_mov_right.shape)])
             dpg.set_value("ZonasSinFrame2",[self.eje_frame,self.prob_mov_right,np.zeros(self.prob_mov_right.shape)])
 
@@ -684,8 +684,8 @@ class Manager():
                     self.sub_arrays_processing()
                     self.set_data_graphs()
                     #Configurar textos
-                    dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho: {self.left_moves} movimientos")
-                    if fish_number == 2: dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho: {self.right_moves} movimientos")
+                    dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho:\n{self.left_moves} movimientos")
+                    if fish_number == 2: dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho:\n{self.right_moves} movimientos")
 
                     #Configuramos la primera imágen del video
                     self.set_first_image()
