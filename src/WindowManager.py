@@ -700,7 +700,7 @@ class Manager():
                     self.sub_arrays_processing()
                     self.set_data_graphs()
                     #Configurar textos
-                    dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez derecho:\n{self.left_moves} movimientos")
+                    dpg.set_value("MovimientosIzquierda",f"Numero total de movimientos del pez izquierda:\n{self.left_moves} movimientos")
                     if fish_number == 2: dpg.set_value("MovimientosDerecha",f"Numero total de movimientos del pez derecho:\n{self.right_moves} movimientos")
 
                     #Configuramos la primera imágen del video
