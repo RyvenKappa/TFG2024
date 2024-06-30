@@ -10,7 +10,7 @@ from results_module import Data_Processor
 import cv2 as cv
 import pandas as pd
 import numpy as np
-import pprint
+import json
 import csv
 from video_controller import Controller
 
@@ -506,6 +506,22 @@ class Manager():
                 writer.writerow([len(self.right_frames)])
                 writer.writerow(self.right_frames)
             archivo_csv.close()
+            diccionario = {
+                "video_name": self.video_name,
+                "left":{
+                    "movement_number":len(self.left_frames),
+                    "movement_frames":self.left_frames
+                },
+                "right": None
+            }
+            if type(self.dataset_global_right)!= type(None):
+                diccionario["right"]={
+                                    "movement_number":len(self.right_frames),
+                                    "movement_frames":self.right_frames
+                                    }
+            path = self.save_path+self.video_name + ".json"
+            archivo = open(path,mode="w")
+            json.dump(diccionario,archivo,indent=4)
         except Exception as e:
             print(e)
     
@@ -790,7 +806,7 @@ class Manager():
                 for frame in i[0]:
                     self.prob_mov_left[frame] = 1
             else:
-                self.left_frames.append(i[1])
+                self.left_frames.append(int(i[1]))
                 for frame in i[0]:
                     self.real_mov_left[frame] = 1
         if len(self.listas_movimientos) == 2:
@@ -799,7 +815,7 @@ class Manager():
                     for frame in i[0]:
                         self.prob_mov_right[frame] = 1
                 else:
-                    self.right_frames.append(i[1])
+                    self.right_frames.append(int(i[1]))
                     for frame in i[0]:
                         self.real_mov_right[frame] = 1
     

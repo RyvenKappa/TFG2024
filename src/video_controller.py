@@ -34,7 +34,6 @@ class Controller(mp.Process):
                         self.play = False
                         self.cap.set(cv.CAP_PROP_POS_FRAMES, 0)
                 else:
-                    self.procesar_mensaje(self.control_output_endpoint.recv())
                     time.sleep(self.t*0.5)
     
     def procesar_mensaje(self,mensaje):
