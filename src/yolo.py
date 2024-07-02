@@ -79,9 +79,11 @@ class model:
                 try:
                     gpu:str = core.get_property("GPU","FULL_DEVICE_NAME")
                     cpu:str = core.get_property("CPU","FULL_DEVICE_NAME")
+                    print(cpu)
+                    print(gpu)
                     gpu = gpu.lower()
                     cpu = cpu.lower()
-                    if gpu.find("intel")>0 or cpu.find("intel")>0:
+                    if gpu.find("intel")>=0 or cpu.find("intel")>=0 or gpu.find("UHD")>=0:
                         """
                         CPU y una GPU de intel, y otra de amd o desconocida
                         """
