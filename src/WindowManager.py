@@ -150,7 +150,7 @@ class Manager():
                             height=300,
                             width=400
                         ):
-                        dpg.add_file_extension("Archivos de video{.asf,.avi,.gif,.m4v,.mkv,.mov,.mp4,.mpeg,.mpg,.ts,.wmv,.webm}")#Videos
+                        dpg.add_file_extension("Archivos de video{.asf,.avi,.gif,.m4v,.mkv,.mov,.mp4,.mpeg,.mpg,.ts,.wmv,.webm,.MP4}")#Videos
                         dpg.add_file_extension('.*')
                 with dpg.table_row():
                     dpg.add_spacer()
