@@ -57,6 +57,9 @@ class model:
         print(f"Los dispositivos encontrados son: {devices}")
         try:
             cuda_bool = torch.cuda.is_available()
+            if cuda_bool:
+                capability = torch.cuda.get_device_capability()
+                capability = capability[0] + capability[1]/10
         except:
             cuda_bool = False
         print(f"Boleano de cuda: {cuda_bool}")
@@ -65,41 +68,35 @@ class model:
         if self.task == "obb":
             path = "src/models/obb/"
         try:
-            if cuda_bool:
-                capability = torch.cuda.get_device_capability()
-                capability = capability[0] + capability[1]/10
-                if capability>=3.7:
-                    print(f"Modelo a cargar de pt,gpu=",torch.cuda.get_device_name(torch.cuda.current_device()))
-                    self.model = YOLO(f"{path}best.pt",task=self.task)
-                    cargado = True
-                    self.cuda = True
+            if cuda_bool and capability>=3.7:
+                print(f"Modelo a cargar de pt,gpu=",torch.cuda.get_device_name(torch.cuda.current_device()))
+                self.model = YOLO(f"{path}best.pt",task=self.task)
+                cargado = True
+                self.cuda = True
             else:
-                raise Exception()
+                self.cuda = False
+                if not cuda_bool or not cargado:
+                        gpu:str = core.get_property("GPU","FULL_DEVICE_NAME")
+                        cpu:str = core.get_property("CPU","FULL_DEVICE_NAME")
+                        print(cpu)
+                        print(gpu)
+                        gpu = gpu.lower()
+                        cpu = cpu.lower()
+                        if gpu.find("intel")>=0 or cpu.find("intel")>=0 or gpu.find("UHD")>=0:
+                            """
+                            CPU y una GPU de intel, y otra de amd o desconocida
+                            """
+                            print(f"Modelo a cargar de openvino, gpu=",{core.get_property("GPU","FULL_DEVICE_NAME")})
+                            self.model = YOLO(f"{path}best_openvino_model",task=self.task)
+                        else:
+                            """
+                            CPU solo, modelo ONNX
+                            """
+                            print("Modelo a cargar de ONNX")
+                            print(f"Modelo a cargar de ONNX, cpu=",{core.get_property("CPU","FULL_DEVICE_NAME")})
+                            self.model = YOLO(f"{path}best.onnx",task=self.task)
         except Exception as e:
-            self.cuda = False
+            self.cuda =False
             print(e)
-            if not cuda_bool or not cargado:
-                try:
-                    gpu:str = core.get_property("GPU","FULL_DEVICE_NAME")
-                    cpu:str = core.get_property("CPU","FULL_DEVICE_NAME")
-                    print(cpu)
-                    print(gpu)
-                    gpu = gpu.lower()
-                    cpu = cpu.lower()
-                    if gpu.find("intel")>=0 or cpu.find("intel")>=0 or gpu.find("UHD")>=0:
-                        """
-                        CPU y una GPU de intel, y otra de amd o desconocida
-                        """
-                        print(f"Modelo a cargar de openvino, gpu=",{core.get_property("GPU","FULL_DEVICE_NAME")})
-                        self.model = YOLO(f"{path}best_openvino_model",task=self.task)
-                    else:
-                        """
-                        CPU solo, modelo ONNX
-                        """
-                        print("Modelo a cargar de ONNX")
-                        print(f"Modelo a cargar de ONNX, cpu=",{core.get_property("CPU","FULL_DEVICE_NAME")})
-                        self.model = YOLO(f"{path}best.onnx",task=self.task)
-                except Exception as e:
-                    print(e)
-                    print("Problema cargando un modelo eficiente, cargando modelo por defecto tipo PyTorch")
-                    self.model = YOLO(f"{path}best.pt",task=self.task)
+            print("Problema cargando un modelo eficiente, cargando modelo por defecto tipo PyTorch")
+            self.model = YOLO(f"{path}best.pt",task=self.task)
