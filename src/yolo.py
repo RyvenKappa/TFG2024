@@ -58,7 +58,7 @@ class model:
         try:
             cuda_bool = torch.cuda.is_available()
         except:
-            pass
+            cuda_bool = False
         print(f"Boleano de cuda: {cuda_bool}")
         path = "src/models/normal/" #Path donde se encuentran los modelos, TODO ser capaz de buscarlos/descargarlos del repositorio de Diego
         
@@ -66,10 +66,13 @@ class model:
             path = "src/models/obb/"
         try:
             if cuda_bool:
-                print(f"Modelo a cargar de pt,gpu=",torch.cuda.get_device_name(torch.cuda.current_device()))
-                self.model = YOLO(f"{path}best.pt",task=self.task)
-                cargado = True
-                self.cuda = True
+                capability = torch.cuda.get_device_capability()
+                capability = capability[0] + capability[1]/10
+                if capability>=3.7:
+                    print(f"Modelo a cargar de pt,gpu=",torch.cuda.get_device_name(torch.cuda.current_device()))
+                    self.model = YOLO(f"{path}best.pt",task=self.task)
+                    cargado = True
+                    self.cuda = True
             else:
                 raise Exception()
         except Exception as e:
