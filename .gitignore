@@ -3,7 +3,6 @@ resources
 imagenes_prueba
 training/dataset*
 training_rocio/dataset*
-*.pt
 runs
 RTCP
 *__pycache__
@@ -15,3 +14,4 @@ main.spec
 error_derecha.csv
 error_izquierda.csv
 test/histogramas.py
+standalone/models
