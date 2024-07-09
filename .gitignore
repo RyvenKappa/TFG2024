@@ -14,3 +14,4 @@ main.spec
 23_NT_R1_J7_P9_P10.mp4.json
 error_derecha.csv
 error_izquierda.csv
+test/histogramas.py

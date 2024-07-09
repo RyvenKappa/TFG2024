@@ -10,13 +10,14 @@ import numpy as np
 
 class Data_Processor(Process):
 
-    def __init__(self,recepcion_endpoint,update_endpoint,frames_number):
+    def __init__(self,recepcion_endpoint,update_endpoint,frames_number,task:str):
         super().__init__()
         self.data_enpoint = recepcion_endpoint
         self.update_enpoint = update_endpoint
         self.datos_entrantes = []
         self.fish_number = None
         self.mean = None
+        self.task = task
         self.frames_number = frames_number
 
     def run(self):
@@ -33,7 +34,7 @@ class Data_Processor(Process):
                     frame = frame + 1
                     self.datos_entrantes.append([pickle.loads(datos[0]),datos[1],datos[2]])
                 if len(self.datos_entrantes)==50 and self.fish_number==None:
-                    self.fish_number,self.mean = estimate_fish_number(pd.DataFrame(self.datos_entrantes))
+                    self.fish_number,self.mean = estimate_fish_number(pd.DataFrame(self.datos_entrantes),self.task)
                     self.mean = int(self.mean)
                     #print(f"Tenemos {self.fish_number} truchas y una mediana de: {self.mean}")
             elif self.fish_number!=None:
@@ -80,7 +81,7 @@ class Data_Processor(Process):
         boxes = frame_data[0]
         orig_img = frame_data[1]
         size = frame_data[2]
-        if type(boxes)==ultralytics.engine.results.OBB:
+        if self.task.__eq__("obb"):
             self.__best_box_obb_detect(boxes,orig_img,size)
         else:
             self.__best_box_data_detect(boxes,orig_img,size)

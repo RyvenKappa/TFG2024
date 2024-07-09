@@ -433,35 +433,36 @@ class Manager():
         """
             Callback para el botón de inferencia, verifica el video, inicia los procesos, inicia la inferencia y cambia de pantalla
         """
-        self.video_path:str = dpg.get_value('inputText1')
-        self.cap = cv.VideoCapture(self.video_path)
-        self.total_frames = int(self.cap.get(cv.CAP_PROP_FRAME_COUNT))
-        if self.total_frames <51:
-            dpg.show_item("ModalWindowError")
-            dpg.set_value("TextoError","Error, el video dura menos de 50 fotogramas")
-            self.cap.release()
-            return
-        ret, self.first_image = self.cap.read()#Nos guardamos la primera imagen para futuro
-        if not ret:
-            self.first_image = None
-            self.cap.release()
+        if self.infiriendo == False:
+            self.video_path:str = dpg.get_value('inputText1')
+            self.cap = cv.VideoCapture(self.video_path)
+            self.total_frames = int(self.cap.get(cv.CAP_PROP_FRAME_COUNT))
+            if self.total_frames <51:
+                dpg.show_item("ModalWindowError")
+                dpg.set_value("TextoError","Error, el video dura menos de 50 fotogramas")
+                self.cap.release()
+                return
+            ret, self.first_image = self.cap.read()#Nos guardamos la primera imagen para futuro
+            if not ret:
+                self.first_image = None
+                self.cap.release()
 
-        results_pipe = mp.Pipe(duplex=False) #(Output,Input) de una conexión unidireccional entre el proceso main y el proceso de resultados
-        inference_pipe = mp.Pipe(duplex=False) #Tubería para que el proceso de inferencia le vaya pasando las imágenes al de procesado de resultados
+            results_pipe = mp.Pipe(duplex=False) #(Output,Input) de una conexión unidireccional entre el proceso main y el proceso de resultados
+            inference_pipe = mp.Pipe(duplex=False) #Tubería para que el proceso de inferencia le vaya pasando las imágenes al de procesado de resultados
 
-        self.model = model()
-        self.data_processor = Data_Processor(inference_pipe[0],results_pipe[1],self.total_frames)
-        self.frame_enpoint = results_pipe[0]
-        self.model.video_inference(inference_pipe[1],self.video_path)
-        self.data_processor.start()
-        self.infiriendo = True
-        dpg.set_value(item="TextProgreso",value=f"0 fotogramas de {self.total_frames} procesados")
-        dpg.set_value(item="progreso",value=0.0)
+            self.model = model()
+            self.data_processor = Data_Processor(inference_pipe[0],results_pipe[1],self.total_frames,self.model.get_task())
+            self.frame_enpoint = results_pipe[0]
+            self.model.video_inference(inference_pipe[1],self.video_path)
+            self.data_processor.start()
+            self.infiriendo = True
+            dpg.set_value(item="TextProgreso",value=f"0 fotogramas de {self.total_frames} procesados")
+            dpg.set_value(item="progreso",value=0.0)
 
-        self.video_name = self.video_path[self.video_path.rfind("\\")+1:]
+            self.video_name = self.video_path[self.video_path.rfind("\\")+1:]
 
-        #Cambio de pantalla
-        self.set_window("LoadingWindow")
+            #Cambio de pantalla
+            self.set_window("LoadingWindow")
 
     def cancelar_callback(self,sender,app_data):
         """

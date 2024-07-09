@@ -47,6 +47,12 @@ class model:
             else:
                 print("Ya esta activo este tipo de trabajo")
 
+    def get_task(self):
+        """
+            Getter de la task del objeto yolo
+        """
+        return self.task
+
     def __set_model(self):
         """
             Metodo privado de la clase que se usa para configurar el modelo según hardware y según el tipo de trabajo marcado en el objeto

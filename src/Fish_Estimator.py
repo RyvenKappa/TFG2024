@@ -6,7 +6,7 @@ import numpy as np
 import ultralytics.engine.results
 from torch import Tensor
 
-def estimate_fish_number(data:pd.DataFrame):
+def estimate_fish_number(data:pd.DataFrame,result_type:str):
     """
     Recibo un array con las cajas, imagen original y el shape original.
     A través de las cajas y el shape original analizaremos cuantos peces hay
@@ -16,18 +16,16 @@ def estimate_fish_number(data:pd.DataFrame):
     samples = []
     img_x = data[2][0][1]
     data = data[0] #Sacamos la serie que representa la columna de bounding boxes
-    if type(data[0][0]) == ultralytics.engine.results.Boxes:
+    if result_type.__eq__("detect"):
         for d in data:
             xywh = d.xywh #tensor
             for value in xywh:
                 samples.append(value[0])
-    elif type(data[0][0]) == ultralytics.engine.results.OBB:
+    else:
         for d in data:
             xywhr = d.xywhr #tensor
             for value in xywhr:
-                samples.append(value[0]) 
-
-    #Clustering by KMeans is done to obtain the number of bounding boxes for the x
+                samples.append(value[0])
     x2 = []
     samples = Tensor.cpu(Tensor(samples)).tolist()
     samples_mean = np.mean(samples)
